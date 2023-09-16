@@ -189,17 +189,17 @@ class DrMem extends InheritedWidget {
   /// Adds a new node to the table of known DrMem nodes. When this completes,
   /// the application can interact with the node using the rest of the API.
   ///
-  /// `name` is the name of the node. On a given subnet, all DrMem node should
+  /// [name] is the name of the node. On a given subnet, all DrMem node should
   /// have unique names.
   ///
-  /// `host` is the IP address of the host.
+  /// [host] is the IP address of the host.
   ///
-  /// `port` is the port number to use.
+  /// [port] is the port number to use.
   ///
-  /// `qEnd` is the URL path needed to get to the GraphQL query/mutation
+  /// [qEnd] is the URL path needed to get to the GraphQL query/mutation
   /// handler.
   ///
-  /// `sEnd` is the URL path needed to get to the GraphQL subscription handler.
+  /// [sEnd] is the URL path needed to get to the GraphQL subscription handler.
 
   void addNode(String name, String host, int port, String qEnd, String sEnd) =>
       _nodes[name] = (
