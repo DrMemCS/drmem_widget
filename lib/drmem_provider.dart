@@ -24,6 +24,9 @@ export 'src/device_value.dart';
 import 'src/device_like.dart';
 export 'src/device_like.dart';
 
+import 'src/device_info.dart';
+export 'src/device_info.dart';
+
 /// Represents a reading of a device.
 
 class Reading {
@@ -134,27 +137,6 @@ class DriverInfo {
         description = o.description;
 }
 
-/// The result type for the [DrMem.getDeviceInfo] query.
-
-class DevInfo {
-  /// Full name and location of device.
-  final Device device;
-
-  /// Indicates whether the device is settable.
-  final bool settable;
-
-  /// Specifies the engineering units for the device. Some devices (e.g.
-  /// boolean device) don't have units associated with the value. In those
-  /// cases, this field will be `null`.
-  final String? units;
-
-  /// If the device has any history in the backend storage, this field will
-  /// contain information related to it.
-  final DevHistory? history;
-
-  const DevInfo(this.device, this.settable, this.units, this.history);
-}
-
 /// The [DrMem] widget implements a "provider" widget for an application's
 /// tree. It manages GraphQL connections to registered DrMem nodes. It should be
 /// located near the top of the tree so it remains stable during the life of
@@ -253,8 +235,8 @@ class DrMem extends InheritedWidget {
 
   // Translates the response of a [getDeviceInfo] query into a `List<DevInfo>`.
 
-  List<DevInfo> _toDevInfoList(GGetDeviceData result) => result.deviceInfo
-      .map((e) => DevInfo(
+  List<DeviceInfo> _toDevInfoList(GGetDeviceData result) => result.deviceInfo
+      .map((e) => DeviceInfo(
             Device(name: e.deviceName),
             e.settable,
             e.units,
@@ -354,10 +336,9 @@ class DrMem extends InheritedWidget {
   /// Returns a Future that resolves to a `List` of device information
   /// ([DevInfo]), or an error.
 
-  Future<List<DevInfo>> getDeviceInfo({required DevicePattern device}) => _rpc(
-      device.node,
-      GGetDeviceReq((b) => b..vars.name = device.name),
-      _toDevInfoList);
+  Future<List<DeviceInfo>> getDeviceInfo({required DevicePattern device}) =>
+      _rpc(device.node, GGetDeviceReq((b) => b..vars.name = device.name),
+          _toDevInfoList);
 
   // Returns a date builder or `null`, based on the date parameter.
 
