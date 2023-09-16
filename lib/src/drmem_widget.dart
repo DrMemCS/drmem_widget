@@ -46,9 +46,9 @@ extension on GGetDeviceData_deviceInfo_history {
 
       return DeviceHistory(
           totalPoints,
-          _readingFrom(oldest.stamp, oldest.boolValue, oldest.intValue,
+          _Convert.fromParams(oldest.stamp, oldest.boolValue, oldest.intValue,
               oldest.floatValue, oldest.stringValue),
-          _readingFrom(newest.stamp, newest.boolValue, newest.intValue,
+          _Convert.fromParams(newest.stamp, newest.boolValue, newest.intValue,
               newest.floatValue, newest.stringValue));
     } else {
       return null;
@@ -60,22 +60,26 @@ extension on GSetDeviceData_setDevice {
   // Creates a [Reading] value from a GraphQL [setDevice] reply value.
 
   Reading toReading() =>
-      _readingFrom(stamp, boolValue, intValue, floatValue, stringValue);
+      _Convert.fromParams(stamp, boolValue, intValue, floatValue, stringValue);
 }
 
-// Creates a [Reading] value from a set of values.
+extension _Convert on Reading {
+  // Creates a [Reading] value from a set of values.
 
-Reading _readingFrom(GDateTimeUtc dt, bool? b, int? i, double? d, String? s) =>
-    Reading(
-        DateTime.parse(dt.value),
-        switch ((b, i, d, s)) {
-          (_, null, null, null) when b != null => DevBool(value: b),
-          (null, _, null, null) when i != null => DevInt(value: i),
-          (null, null, _, null) when d != null => DevFlt(value: d),
-          (null, null, null, _) when s != null => DevStr(value: s),
-          (null, null, null, null) => throw (Exception("reading has no data")),
-          _ => throw (Exception("reading has multiple value types"))
-        });
+  static Reading fromParams(
+          GDateTimeUtc dt, bool? b, int? i, double? d, String? s) =>
+      Reading(
+          DateTime.parse(dt.value),
+          switch ((b, i, d, s)) {
+            (_, null, null, null) when b != null => DevBool(value: b),
+            (null, _, null, null) when i != null => DevInt(value: i),
+            (null, null, _, null) when d != null => DevFlt(value: d),
+            (null, null, null, _) when s != null => DevStr(value: s),
+            (null, null, null, null) =>
+              throw (Exception("reading has no data")),
+            _ => throw (Exception("reading has multiple value types"))
+          });
+}
 
 // Creates a [DriverInfo] object from a GraphQL [driverInfo] reply value.
 
@@ -345,7 +349,7 @@ class DrMem extends InheritedWidget {
           ..vars.range = _buildDateRange(startTime, endTime)))
         .where((response) => !response.loading && response.data != null)
         .map((response) => response.data!.monitorDevice)
-        .map((data) => _readingFrom(data.stamp, data.boolValue, data.intValue,
-            data.floatValue, data.stringValue));
+        .map((data) => _Convert.fromParams(data.stamp, data.boolValue,
+            data.intValue, data.floatValue, data.stringValue));
   }
 }
