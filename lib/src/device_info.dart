@@ -1,6 +1,7 @@
 library;
 
 import "device_like.dart";
+import "device_history.dart";
 
 /// The result type for the [DrMem.getDeviceInfo] query. Provides
 /// meta-information about a DrMem device.
@@ -19,7 +20,7 @@ class DeviceInfo {
 
   /// If the device has any history in the backend storage, this field will
   /// contain information related to it.
-  final DevHistory? history;
+  final DeviceHistory? history;
 
   const DeviceInfo(this.device, this.settable, this.units, this.history);
 }

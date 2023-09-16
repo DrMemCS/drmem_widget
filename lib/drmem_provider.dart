@@ -24,103 +24,63 @@ export 'src/device_value.dart';
 import 'src/device_like.dart';
 export 'src/device_like.dart';
 
+import 'src/device_history.dart';
+export 'src/device_history.dart';
+
+import 'src/reading.dart';
+export 'src/reading.dart';
+
 import 'src/device_info.dart';
 export 'src/device_info.dart';
 
-/// Represents a reading of a device.
-
-class Reading {
-  /// This field represents the time that the device value was saved. This value
-  /// should be very close to when the associated hardware was sampled. It is
-  /// up to the driver to keep this promise.
-  final DateTime stamp;
-
-  /// The value of the device.
-  late final DevValue value;
-
-  Reading(this.stamp, this.value);
-
-  /// Creates a [Reading] value from a set of values.
-  Reading.from(GDateTimeUtc dt, bool? b, int? i, double? d, String? s)
-      : stamp = DateTime.parse(dt.value) {
-    // Only one data value is valid. This switch statement converts the data
-    // to the correct DevValue-derived type, as well as checking for all
-    // `null`s or multiple values being returned.
-
-    switch ((b, i, d, s)) {
-      case (_, null, null, null) when b != null:
-        value = DevBool(value: b);
-
-      case (null, _, null, null) when i != null:
-        value = DevInt(value: i);
-
-      case (null, null, _, null) when d != null:
-        value = DevFlt(value: d);
-
-      case (null, null, null, _) when s != null:
-        value = DevStr(value: s);
-
-      case (null, null, null, null):
-        throw (Exception("reading has no data"));
-
-      default:
-        throw (Exception("reading has multiple value types"));
-    }
-  }
-
-  /// Creates a [Reading] value from a GraphQL [setDevice] reply value.
-
-  Reading.fromSetResult(GSetDeviceData_setDevice reply)
-      : this.from(reply.stamp, reply.boolValue, reply.intValue,
-            reply.floatValue, reply.stringValue);
-}
-
-/// Represents the history associated with a device. This is a snapshot of the
-/// history, at the time of the query. There's no guarantee how long this
-/// information will remain accurate.
-
-class DevHistory {
-  /// Indicates how many data points were in the device's history at the time
-  /// of the query.
-  final int totalPoints;
-
-  /// The oldest reading, at the time of the query. It is possible that, after
-  /// this query returns, the oldest point is dropped due to new points being
-  /// added.
-  final Reading oldest;
-
-  /// The most recent reading, at the time of the query. It is possible that,
-  /// after this query returns, a newer point gets added to the history.
-  final Reading newest;
-
-  const DevHistory(this.totalPoints, this.oldest, this.newest);
-
-  /// Converts the GraphQL-generated reply type into a friendlier, Dart version.
-  static DevHistory? from(GGetDeviceData_deviceInfo_history o) {
-    if (o.firstPoint != null && o.lastPoint != null) {
-      final oldest = o.firstPoint!;
-      final newest = o.lastPoint!;
-
-      return DevHistory(
-          o.totalPoints,
-          Reading.from(oldest.stamp, oldest.boolValue, oldest.intValue,
-              oldest.floatValue, oldest.stringValue),
-          Reading.from(newest.stamp, newest.boolValue, newest.intValue,
-              newest.floatValue, newest.stringValue));
-    } else {
-      return null;
-    }
-  }
-}
-
 extension on DevValue {
   GSettingDataBuilder toSettingData() => switch (this) {
-        DevBool(value: var value) => GSettingDataBuilder()..Gbool = value,
-        DevInt(value: var value) => GSettingDataBuilder()..Gint = value,
-        DevFlt(value: var value) => GSettingDataBuilder()..flt = value,
-        DevStr(value: var value) => GSettingDataBuilder()..str = value
+        DevBool(value: bool value) => GSettingDataBuilder()..Gbool = value,
+        DevInt(value: int value) => GSettingDataBuilder()..Gint = value,
+        DevFlt(value: double value) => GSettingDataBuilder()..flt = value,
+        DevStr(value: String value) => GSettingDataBuilder()..str = value
       };
 }
+
+// Converts the GraphQL-generated reply type (representing the device's
+// historical summary) into a friendlier, Dart version.
+DeviceHistory? _historyFromDeviceInfo(GGetDeviceData_deviceInfo_history o) {
+  if (o.firstPoint != null && o.lastPoint != null) {
+    final oldest = o.firstPoint!;
+    final newest = o.lastPoint!;
+
+    return DeviceHistory(
+        o.totalPoints,
+        _readingFrom(oldest.stamp, oldest.boolValue, oldest.intValue,
+            oldest.floatValue, oldest.stringValue),
+        _readingFrom(newest.stamp, newest.boolValue, newest.intValue,
+            newest.floatValue, newest.stringValue));
+  } else {
+    return null;
+  }
+}
+
+// Creates a [Reading] value from a set of values.
+Reading _readingFrom(GDateTimeUtc dt, bool? b, int? i, double? d, String? s) =>
+    Reading(
+        DateTime.parse(dt.value),
+        switch ((b, i, d, s)) {
+          (_, null, null, null) when b != null => DevBool(value: b),
+          (null, _, null, null) when i != null => DevInt(value: i),
+          (null, null, _, null) when d != null => DevFlt(value: d),
+          (null, null, null, _) when s != null => DevStr(value: s),
+          (null, null, null, null) => throw (Exception("reading has no data")),
+          _ => throw (Exception("reading has multiple value types"))
+        });
+
+// Creates a [Reading] value from a GraphQL [setDevice] reply value.
+
+Reading _readingFromSetResult(GSetDeviceData_setDevice reply) => _readingFrom(
+    reply.stamp,
+    reply.boolValue,
+    reply.intValue,
+    reply.floatValue,
+    reply.stringValue);
 
 /// The result type for the [DrMem.getDriverInfo] query.
 
@@ -240,7 +200,7 @@ class DrMem extends InheritedWidget {
             Device(name: e.deviceName),
             e.settable,
             e.units,
-            DevHistory.from(e.history),
+            _historyFromDeviceInfo(e.history),
           ))
       .toList();
 
@@ -307,7 +267,7 @@ class DrMem extends InheritedWidget {
       GSetDeviceReq((b) => b
         ..vars.device = device.name
         ..vars.value = value.toSettingData()),
-      (result) => Reading.fromSetResult(result.setDevice));
+      (result) => _readingFromSetResult(result.setDevice));
 
   /// Retrieves driver information from a DrMem node.
   ///
@@ -400,7 +360,7 @@ class DrMem extends InheritedWidget {
           ..vars.range = _buildDateRange(startTime, endTime)))
         .where((response) => !response.loading && response.data != null)
         .map((response) => response.data!.monitorDevice)
-        .map((data) => Reading.from(data.stamp, data.boolValue, data.intValue,
+        .map((data) => _readingFrom(data.stamp, data.boolValue, data.intValue,
             data.floatValue, data.stringValue));
   }
 }
