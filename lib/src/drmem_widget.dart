@@ -245,7 +245,7 @@ class DrMem extends InheritedWidget {
   /// is sent, the driver will return an error. See the driver documentation
   /// to see what data type is supported by the device.
   ///
-  /// The functon returns a [Reading] structure echoing the setting and
+  /// The function returns a [Reading] structure echoing the setting and
   /// containing the timestamp of when the setting was applied. Some drivers
   /// will return an error when a setting value is out of range. Other drivers
   /// may accept the value, but clip it to remain in range. See the driver docs
