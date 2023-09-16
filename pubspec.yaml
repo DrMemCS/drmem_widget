@@ -1,20 +1,30 @@
-name: drmem_widget
-description: A new Flutter package project.
-version: 0.0.1
-homepage:
+name: drmem_provider
+description: A DrMem control system widget
+version: 0.1.0
+homepage: https://github.com/DrMemCS
 
 environment:
-  sdk: '>=3.1.1 <4.0.0'
+  sdk: '>=3.1.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
+  nsd: "^2.3.1"
+
+  gql_http_link: ^1.0.1
+  gql_websocket_link: ^1.1.0
+  ferry: ^0.14.2+1
+  ferry_flutter: ^0.8.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+
+  build_runner: ^2.4.6
+  ferry_generator: ^0.8.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

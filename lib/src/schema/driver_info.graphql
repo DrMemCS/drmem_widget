@@ -1,0 +1,7 @@
+query AllDrivers {
+  driverInfo {
+    name
+    summary
+    description
+  }
+}

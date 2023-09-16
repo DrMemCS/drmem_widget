@@ -1,0 +1,114 @@
+schema {
+  query: Config
+  mutation: Control
+  subscription: Subscription
+}
+
+# Describes data that can be sent to devices. When specifying data, one -- and only one -- field must be set.
+input SettingData {
+  # Placeholder for integer values.
+  int: Int
+
+  # Placeholder for float values.
+  flt: Float
+
+  # Placeholder for boolean values.
+  bool: Boolean
+
+  # Placeholder for string values.
+  str: String
+}
+
+# Reports configuration information for `drmemd`.
+type Config {
+  # Returns information about the available drivers in the running instance of `drmemd`. If `name` isn't provided, an array of all driver information is returned. If `name` is specified and a driver with that name exists, a single element array is returned. Otherwise `null` is returned.
+  driverInfo(name: String): [DriverInfo!]!
+
+  # Returns information associated with the devices that are active in the running system. Arguments to the query will filter the results.
+  #
+  # If the argument `pattern` is provided, only the devices whose name matches the pattern will be included in the results. The pattern follows the shell "glob" style.
+  #
+  # If the argument `settable` is provided, it returns devices that are or aren't settable, depending on the value of the agument.
+  #
+  # NOTE: At this point, the only supported pattern is the entire device name. Proper pattern handling will be added soon.
+  deviceInfo(pattern: String, settable: Boolean): [DeviceInfo!]!
+}
+
+# Information about the history related to the device. Note that this
+# information is a snapshot and that it could become invalid immediately
+# after receiving it (depending on how often the device is updated.)
+type DeviceHistory {
+  # The total number of points in the history.
+  totalPoints: Int!
+  # If the device has history, this is the oldest point that is stored.
+  firstPoint: Reading
+  # If the device has history, this is the latest point.
+  lastPoint: Reading
+}
+
+# Information about a registered device in the running version of `drmemd`.
+type DeviceInfo {
+  # The name of the device.
+  deviceName: String!
+
+  # The engineering units of the device's value.
+  units: String
+
+  # Indicates whether the device is read-only or can be controlled.
+  settable: Boolean!
+
+  # Contains information about the history saved for the device.
+  history: DeviceHistory!
+
+  # Information about the driver that implements this device.
+  driver: DriverInfo
+}
+
+# DateTime
+scalar DateTimeUtc
+
+# Represents a value of a device at an instant of time.
+type Reading {
+  device: String!
+  stamp: DateTimeUtc!
+
+  # Placeholder for integer values.
+  intValue: Int
+
+  # Placeholder for float values.
+  floatValue: Float
+
+  # Placeholder for boolean values.
+  boolValue: Boolean
+
+  # Placeholder for string values.
+  stringValue: String
+}
+
+input DateRange {
+  start: DateTimeUtc
+  end: DateTimeUtc
+}
+
+type Subscription {
+  # Sets up a connection to receive all updates to a device. The GraphQL request must provide the name of a device. This method returns a stream which generates a reply each time a device's value changes.
+  monitorDevice(device: String!, range: DateRange): Reading!
+}
+
+# This group of queries perform modifications to devices.
+type Control {
+  # Submits `value` to be applied to the device associated with the given `name`. If the data is in a format the device doesn't support an error is returned. The `value` parameter contains several fields. Only one should be set. It is an error to have all fields `null` or more than one field non-`null`.
+  setDevice(name: String!, value: SettingData!): Reading!
+}
+
+# Information about a driver in the running version of `drmemd`.
+type DriverInfo {
+  # The name of the driver.
+  name: String!
+
+  # A short summary of the driver's purpose.
+  summary: String!
+
+  # Detailed information about the driver: the configuration parameters; the devices it registers; and other pertinent information. This information is formatted in Markdown.
+  description: String!
+}

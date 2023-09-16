@@ -1,0 +1,11 @@
+targets:
+  $default:
+    builders:
+      ferry_generator|serializer_builder:
+        enabled: true
+        options:
+          schema: drmem_provider|lib/src/schema/drmem.graphql
+      ferry_generator|graphql_builder:
+        enabled: true
+        options:
+          schema: drmem_provider|lib/src/schema/drmem.graphql

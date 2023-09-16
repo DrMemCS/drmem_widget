@@ -1,0 +1,27 @@
+query GetAllDevices {
+	deviceInfo {
+    deviceName
+    settable
+    units
+    history {
+      totalPoints
+      firstPoint {
+        stamp
+        boolValue
+        intValue
+        floatValue
+        stringValue
+      }
+      lastPoint {
+        stamp
+        boolValue
+        intValue
+        floatValue
+        stringValue
+      }
+    }
+    driver {
+      name
+    }
+  }
+}
