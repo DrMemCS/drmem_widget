@@ -35,22 +35,24 @@ extension on DevValue {
       };
 }
 
+extension on GGetDeviceData_deviceInfo_history {
 // Converts the GraphQL-generated reply type (representing the device's
 // historical summary) into a friendlier, Dart version.
 
-DeviceHistory? _historyFromDeviceInfo(GGetDeviceData_deviceInfo_history o) {
-  if (o.firstPoint != null && o.lastPoint != null) {
-    final oldest = o.firstPoint!;
-    final newest = o.lastPoint!;
+  DeviceHistory? toDeviceHistory() {
+    if (firstPoint != null && lastPoint != null) {
+      final oldest = firstPoint!;
+      final newest = lastPoint!;
 
-    return DeviceHistory(
-        o.totalPoints,
-        _readingFrom(oldest.stamp, oldest.boolValue, oldest.intValue,
-            oldest.floatValue, oldest.stringValue),
-        _readingFrom(newest.stamp, newest.boolValue, newest.intValue,
-            newest.floatValue, newest.stringValue));
-  } else {
-    return null;
+      return DeviceHistory(
+          totalPoints,
+          _readingFrom(oldest.stamp, oldest.boolValue, oldest.intValue,
+              oldest.floatValue, oldest.stringValue),
+          _readingFrom(newest.stamp, newest.boolValue, newest.intValue,
+              newest.floatValue, newest.stringValue));
+    } else {
+      return null;
+    }
   }
 }
 
@@ -185,7 +187,7 @@ class DrMem extends InheritedWidget {
             Device(name: e.deviceName),
             e.settable,
             e.units,
-            _historyFromDeviceInfo(e.history),
+            e.history.toDeviceHistory(),
           ))
       .toList();
 
