@@ -56,6 +56,13 @@ extension on GGetDeviceData_deviceInfo_history {
   }
 }
 
+extension on GSetDeviceData_setDevice {
+  // Creates a [Reading] value from a GraphQL [setDevice] reply value.
+
+  Reading toReading() =>
+      _readingFrom(stamp, boolValue, intValue, floatValue, stringValue);
+}
+
 // Creates a [Reading] value from a set of values.
 
 Reading _readingFrom(GDateTimeUtc dt, bool? b, int? i, double? d, String? s) =>
@@ -69,15 +76,6 @@ Reading _readingFrom(GDateTimeUtc dt, bool? b, int? i, double? d, String? s) =>
           (null, null, null, null) => throw (Exception("reading has no data")),
           _ => throw (Exception("reading has multiple value types"))
         });
-
-// Creates a [Reading] value from a GraphQL [setDevice] reply value.
-
-Reading _readingFromSetResult(GSetDeviceData_setDevice reply) => _readingFrom(
-    reply.stamp,
-    reply.boolValue,
-    reply.intValue,
-    reply.floatValue,
-    reply.stringValue);
 
 // Creates a [DriverInfo] object from a GraphQL [driverInfo] reply value.
 
@@ -254,7 +252,7 @@ class DrMem extends InheritedWidget {
       GSetDeviceReq((b) => b
         ..vars.device = device.name
         ..vars.value = value.toSettingData()),
-      (result) => _readingFromSetResult(result.setDevice));
+      (result) => result.setDevice.toReading());
 
   /// Retrieves driver information from a DrMem node.
   ///
