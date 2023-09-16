@@ -30,10 +30,18 @@ export 'src/device_history.dart';
 import 'src/reading.dart';
 export 'src/reading.dart';
 
+import 'src/driver_info.dart';
+export 'src/driver_info.dart';
+
 import 'src/device_info.dart';
 export 'src/device_info.dart';
 
 extension on DevValue {
+  // Adds a method to the DevValue classes which can convert a value into a
+  // builder of [GSettingData]. This is used when a client want to make a
+  // setting. Rather than create a different type (which GraphQL requires),
+  // this allows an app to use the [DevValue] hierarchy for inputs and outputs.
+
   GSettingDataBuilder toSettingData() => switch (this) {
         DevBool(value: bool value) => GSettingDataBuilder()..Gbool = value,
         DevInt(value: int value) => GSettingDataBuilder()..Gint = value,
@@ -44,6 +52,7 @@ extension on DevValue {
 
 // Converts the GraphQL-generated reply type (representing the device's
 // historical summary) into a friendlier, Dart version.
+
 DeviceHistory? _historyFromDeviceInfo(GGetDeviceData_deviceInfo_history o) {
   if (o.firstPoint != null && o.lastPoint != null) {
     final oldest = o.firstPoint!;
@@ -61,6 +70,7 @@ DeviceHistory? _historyFromDeviceInfo(GGetDeviceData_deviceInfo_history o) {
 }
 
 // Creates a [Reading] value from a set of values.
+
 Reading _readingFrom(GDateTimeUtc dt, bool? b, int? i, double? d, String? s) =>
     Reading(
         DateTime.parse(dt.value),
@@ -82,20 +92,10 @@ Reading _readingFromSetResult(GSetDeviceData_setDevice reply) => _readingFrom(
     reply.floatValue,
     reply.stringValue);
 
-/// The result type for the [DrMem.getDriverInfo] query.
+// Creates a [DriverInfo] object from a GraphQL [driverInfo] reply value.
 
-class DriverInfo {
-  final String name;
-  final String summary;
-  final String description;
-
-  const DriverInfo(this.name, this.summary, this.description);
-
-  DriverInfo.from(GAllDriversData_driverInfo o)
-      : name = o.name,
-        summary = o.summary,
-        description = o.description;
-}
+DriverInfo _driverInfoFrom(GAllDriversData_driverInfo o) =>
+    DriverInfo(o.name, o.summary, o.description);
 
 /// The [DrMem] widget implements a "provider" widget for an application's
 /// tree. It manages GraphQL connections to registered DrMem nodes. It should be
@@ -281,7 +281,7 @@ class DrMem extends InheritedWidget {
   Future<List<DriverInfo>> getDriverInfo(String node) => _rpc(
         node,
         GAllDriversReq((b) => b),
-        (result) => result.driverInfo.map(DriverInfo.from).toList(),
+        (result) => result.driverInfo.map(_driverInfoFrom).toList(),
       );
 
   /// Returns information about a device.
