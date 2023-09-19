@@ -5,7 +5,13 @@ targets:
         enabled: true
         options:
           schema: drmem_provider|lib/src/schema/drmem.graphql
+          type_overrides:
+            DateTimeUtc:
+              name: DateTime
       ferry_generator|graphql_builder:
         enabled: true
         options:
           schema: drmem_provider|lib/src/schema/drmem.graphql
+          type_overrides:
+            DateTimeUtc:
+              name: DateTime

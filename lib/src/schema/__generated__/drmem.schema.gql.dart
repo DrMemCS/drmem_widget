@@ -6,8 +6,6 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:drmem_provider/src/schema/__generated__/serializers.gql.dart'
     as _i1;
-import 'package:gql_code_builder/src/serializers/default_scalar_serializer.dart'
-    as _i2;
 
 part 'drmem.schema.gql.g.dart';
 
@@ -36,27 +34,13 @@ abstract class GSettingData
       );
 }
 
-abstract class GDateTimeUtc
-    implements Built<GDateTimeUtc, GDateTimeUtcBuilder> {
-  GDateTimeUtc._();
-
-  factory GDateTimeUtc([String? value]) =>
-      _$GDateTimeUtc((b) => value != null ? (b..value = value) : b);
-
-  String get value;
-  @BuiltValueSerializer(custom: true)
-  static Serializer<GDateTimeUtc> get serializer =>
-      _i2.DefaultScalarSerializer<GDateTimeUtc>(
-          (Object serialized) => GDateTimeUtc((serialized as String?)));
-}
-
 abstract class GDateRange implements Built<GDateRange, GDateRangeBuilder> {
   GDateRange._();
 
   factory GDateRange([Function(GDateRangeBuilder b) updates]) = _$GDateRange;
 
-  GDateTimeUtc? get start;
-  GDateTimeUtc? get end;
+  DateTime? get start;
+  DateTime? get end;
   static Serializer<GDateRange> get serializer => _$gDateRangeSerializer;
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GDateRange.serializer,

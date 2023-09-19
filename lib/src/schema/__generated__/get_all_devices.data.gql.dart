@@ -5,8 +5,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:drmem_provider/src/schema/__generated__/drmem.schema.gql.dart'
-    as _i2;
 import 'package:drmem_provider/src/schema/__generated__/serializers.gql.dart'
     as _i1;
 
@@ -116,7 +114,7 @@ abstract class GGetAllDevicesData_deviceInfo_history_firstPoint
       b..G__typename = 'Reading';
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
-  _i2.GDateTimeUtc get stamp;
+  DateTime get stamp;
   bool? get boolValue;
   int? get intValue;
   double? get floatValue;
@@ -151,7 +149,7 @@ abstract class GGetAllDevicesData_deviceInfo_history_lastPoint
       b..G__typename = 'Reading';
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
-  _i2.GDateTimeUtc get stamp;
+  DateTime get stamp;
   bool? get boolValue;
   int? get intValue;
   double? get floatValue;
