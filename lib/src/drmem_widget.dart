@@ -67,9 +67,9 @@ extension _Convert on Reading {
   // Creates a [Reading] value from a set of values.
 
   static Reading fromParams(
-          GDateTimeUtc dt, bool? b, int? i, double? d, String? s) =>
+          DateTime dt, bool? b, int? i, double? d, String? s) =>
       Reading(
-          DateTime.parse(dt.value),
+          dt,
           switch ((b, i, d, s)) {
             (_, null, null, null) when b != null => DevBool(value: b),
             (null, _, null, null) when i != null => DevInt(value: i),
@@ -289,19 +289,6 @@ class DrMem extends InheritedWidget {
       _rpc(device.node, GGetDeviceReq((b) => b..vars.name = device.name),
           _toDevInfoList);
 
-  // Returns a date builder or `null`, based on the date parameter.
-
-  GDateTimeUtcBuilder? _buildDate(DateTime? dt) {
-    if (dt != null) {
-      final b = GDateTimeUtcBuilder();
-
-      b.value = dt.toIso8601String();
-      return b;
-    } else {
-      return null;
-    }
-  }
-
   // Returns an appropriate GDateRangeBuilder based on the two input dates.
   // In DrMem's GraphQL API, if both dates are `null`, we don't provide a
   // date range (i.e. `null`). Otherwise we return a builder (possibly with
@@ -310,8 +297,8 @@ class DrMem extends InheritedWidget {
   GDateRangeBuilder? _buildDateRange(DateTime? a, DateTime? b) {
     if (a != null && b != null) {
       return GDateRangeBuilder()
-        ..start = _buildDate(a)
-        ..end = _buildDate(b);
+        ..start = a
+        ..end = b;
     } else {
       return null;
     }

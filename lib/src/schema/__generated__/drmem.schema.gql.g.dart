@@ -102,14 +102,14 @@ class _$GDateRangeSerializer implements StructuredSerializer<GDateRange> {
       result
         ..add('start')
         ..add(serializers.serialize(value,
-            specifiedType: const FullType(GDateTimeUtc)));
+            specifiedType: const FullType(DateTime)));
     }
     value = object.end;
     if (value != null) {
       result
         ..add('end')
         ..add(serializers.serialize(value,
-            specifiedType: const FullType(GDateTimeUtc)));
+            specifiedType: const FullType(DateTime)));
     }
     return result;
   }
@@ -126,12 +126,12 @@ class _$GDateRangeSerializer implements StructuredSerializer<GDateRange> {
       final Object? value = iterator.current;
       switch (key) {
         case 'start':
-          result.start.replace(serializers.deserialize(value,
-              specifiedType: const FullType(GDateTimeUtc))! as GDateTimeUtc);
+          result.start = serializers.deserialize(value,
+              specifiedType: const FullType(DateTime)) as DateTime?;
           break;
         case 'end':
-          result.end.replace(serializers.deserialize(value,
-              specifiedType: const FullType(GDateTimeUtc))! as GDateTimeUtc);
+          result.end = serializers.deserialize(value,
+              specifiedType: const FullType(DateTime)) as DateTime?;
           break;
       }
     }
@@ -250,93 +250,11 @@ class GSettingDataBuilder
   }
 }
 
-class _$GDateTimeUtc extends GDateTimeUtc {
-  @override
-  final String value;
-
-  factory _$GDateTimeUtc([void Function(GDateTimeUtcBuilder)? updates]) =>
-      (new GDateTimeUtcBuilder()..update(updates))._build();
-
-  _$GDateTimeUtc._({required this.value}) : super._() {
-    BuiltValueNullFieldError.checkNotNull(value, r'GDateTimeUtc', 'value');
-  }
-
-  @override
-  GDateTimeUtc rebuild(void Function(GDateTimeUtcBuilder) updates) =>
-      (toBuilder()..update(updates)).build();
-
-  @override
-  GDateTimeUtcBuilder toBuilder() => new GDateTimeUtcBuilder()..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is GDateTimeUtc && value == other.value;
-  }
-
-  @override
-  int get hashCode {
-    var _$hash = 0;
-    _$hash = $jc(_$hash, value.hashCode);
-    _$hash = $jf(_$hash);
-    return _$hash;
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper(r'GDateTimeUtc')..add('value', value))
-        .toString();
-  }
-}
-
-class GDateTimeUtcBuilder
-    implements Builder<GDateTimeUtc, GDateTimeUtcBuilder> {
-  _$GDateTimeUtc? _$v;
-
-  String? _value;
-  String? get value => _$this._value;
-  set value(String? value) => _$this._value = value;
-
-  GDateTimeUtcBuilder();
-
-  GDateTimeUtcBuilder get _$this {
-    final $v = _$v;
-    if ($v != null) {
-      _value = $v.value;
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(GDateTimeUtc other) {
-    ArgumentError.checkNotNull(other, 'other');
-    _$v = other as _$GDateTimeUtc;
-  }
-
-  @override
-  void update(void Function(GDateTimeUtcBuilder)? updates) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  GDateTimeUtc build() => _build();
-
-  _$GDateTimeUtc _build() {
-    final _$result = _$v ??
-        new _$GDateTimeUtc._(
-            value: BuiltValueNullFieldError.checkNotNull(
-                value, r'GDateTimeUtc', 'value'));
-    replace(_$result);
-    return _$result;
-  }
-}
-
 class _$GDateRange extends GDateRange {
   @override
-  final GDateTimeUtc? start;
+  final DateTime? start;
   @override
-  final GDateTimeUtc? end;
+  final DateTime? end;
 
   factory _$GDateRange([void Function(GDateRangeBuilder)? updates]) =>
       (new GDateRangeBuilder()..update(updates))._build();
@@ -377,21 +295,21 @@ class _$GDateRange extends GDateRange {
 class GDateRangeBuilder implements Builder<GDateRange, GDateRangeBuilder> {
   _$GDateRange? _$v;
 
-  GDateTimeUtcBuilder? _start;
-  GDateTimeUtcBuilder get start => _$this._start ??= new GDateTimeUtcBuilder();
-  set start(GDateTimeUtcBuilder? start) => _$this._start = start;
+  DateTime? _start;
+  DateTime? get start => _$this._start;
+  set start(DateTime? start) => _$this._start = start;
 
-  GDateTimeUtcBuilder? _end;
-  GDateTimeUtcBuilder get end => _$this._end ??= new GDateTimeUtcBuilder();
-  set end(GDateTimeUtcBuilder? end) => _$this._end = end;
+  DateTime? _end;
+  DateTime? get end => _$this._end;
+  set end(DateTime? end) => _$this._end = end;
 
   GDateRangeBuilder();
 
   GDateRangeBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _start = $v.start?.toBuilder();
-      _end = $v.end?.toBuilder();
+      _start = $v.start;
+      _end = $v.end;
       _$v = null;
     }
     return this;
@@ -412,23 +330,7 @@ class GDateRangeBuilder implements Builder<GDateRange, GDateRangeBuilder> {
   GDateRange build() => _build();
 
   _$GDateRange _build() {
-    _$GDateRange _$result;
-    try {
-      _$result =
-          _$v ?? new _$GDateRange._(start: _start?.build(), end: _end?.build());
-    } catch (_) {
-      late String _$failedField;
-      try {
-        _$failedField = 'start';
-        _start?.build();
-        _$failedField = 'end';
-        _end?.build();
-      } catch (e) {
-        throw new BuiltValueNestedFieldError(
-            r'GDateRange', _$failedField, e.toString());
-      }
-      rethrow;
-    }
+    final _$result = _$v ?? new _$GDateRange._(start: start, end: end);
     replace(_$result);
     return _$result;
   }

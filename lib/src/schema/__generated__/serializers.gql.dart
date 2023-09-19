@@ -11,7 +11,7 @@ import 'package:drmem_provider/src/schema/__generated__/driver_info.req.gql.dart
 import 'package:drmem_provider/src/schema/__generated__/driver_info.var.gql.dart'
     show GAllDriversVars;
 import 'package:drmem_provider/src/schema/__generated__/drmem.schema.gql.dart'
-    show GDateRange, GDateTimeUtc, GSettingData;
+    show GDateRange, GSettingData;
 import 'package:drmem_provider/src/schema/__generated__/get_all_devices.data.gql.dart'
     show
         GGetAllDevicesData,
@@ -62,7 +62,6 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GAllDriversReq,
   GAllDriversVars,
   GDateRange,
-  GDateTimeUtc,
   GGetAllDevicesData,
   GGetAllDevicesData_deviceInfo,
   GGetAllDevicesData_deviceInfo_driver,

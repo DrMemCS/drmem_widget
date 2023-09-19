@@ -4,8 +4,6 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:drmem_provider/src/schema/__generated__/drmem.schema.gql.dart'
-    as _i2;
 import 'package:drmem_provider/src/schema/__generated__/serializers.gql.dart'
     as _i1;
 
@@ -50,7 +48,7 @@ abstract class GMonitorDeviceData_monitorDevice
       b..G__typename = 'Reading';
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
-  _i2.GDateTimeUtc get stamp;
+  DateTime get stamp;
   bool? get boolValue;
   int? get intValue;
   double? get floatValue;

@@ -15,7 +15,6 @@ dependencies:
 
   gql_http_link: ^1.0.1
   gql_websocket_link: ^1.1.0
-  gql_code_builder: ^0.8.0
   ferry: ^0.14.2+1
   ferry_flutter: ^0.8.1
 

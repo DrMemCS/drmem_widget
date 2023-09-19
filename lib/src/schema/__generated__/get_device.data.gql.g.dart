@@ -254,7 +254,7 @@ class _$GGetDeviceData_deviceInfo_history_firstPointSerializer
           specifiedType: const FullType(String)),
       'stamp',
       serializers.serialize(object.stamp,
-          specifiedType: const FullType(_i2.GDateTimeUtc)),
+          specifiedType: const FullType(DateTime)),
     ];
     Object? value;
     value = object.boolValue;
@@ -304,9 +304,8 @@ class _$GGetDeviceData_deviceInfo_history_firstPointSerializer
               specifiedType: const FullType(String))! as String;
           break;
         case 'stamp':
-          result.stamp.replace(serializers.deserialize(value,
-                  specifiedType: const FullType(_i2.GDateTimeUtc))!
-              as _i2.GDateTimeUtc);
+          result.stamp = serializers.deserialize(value,
+              specifiedType: const FullType(DateTime))! as DateTime;
           break;
         case 'boolValue':
           result.boolValue = serializers.deserialize(value,
@@ -352,7 +351,7 @@ class _$GGetDeviceData_deviceInfo_history_lastPointSerializer
           specifiedType: const FullType(String)),
       'stamp',
       serializers.serialize(object.stamp,
-          specifiedType: const FullType(_i2.GDateTimeUtc)),
+          specifiedType: const FullType(DateTime)),
     ];
     Object? value;
     value = object.boolValue;
@@ -402,9 +401,8 @@ class _$GGetDeviceData_deviceInfo_history_lastPointSerializer
               specifiedType: const FullType(String))! as String;
           break;
         case 'stamp':
-          result.stamp.replace(serializers.deserialize(value,
-                  specifiedType: const FullType(_i2.GDateTimeUtc))!
-              as _i2.GDateTimeUtc);
+          result.stamp = serializers.deserialize(value,
+              specifiedType: const FullType(DateTime))! as DateTime;
           break;
         case 'boolValue':
           result.boolValue = serializers.deserialize(value,
@@ -874,7 +872,7 @@ class _$GGetDeviceData_deviceInfo_history_firstPoint
   @override
   final String G__typename;
   @override
-  final _i2.GDateTimeUtc stamp;
+  final DateTime stamp;
   @override
   final bool? boolValue;
   @override
@@ -964,10 +962,9 @@ class GGetDeviceData_deviceInfo_history_firstPointBuilder
   String? get G__typename => _$this._G__typename;
   set G__typename(String? G__typename) => _$this._G__typename = G__typename;
 
-  _i2.GDateTimeUtcBuilder? _stamp;
-  _i2.GDateTimeUtcBuilder get stamp =>
-      _$this._stamp ??= new _i2.GDateTimeUtcBuilder();
-  set stamp(_i2.GDateTimeUtcBuilder? stamp) => _$this._stamp = stamp;
+  DateTime? _stamp;
+  DateTime? get stamp => _$this._stamp;
+  set stamp(DateTime? stamp) => _$this._stamp = stamp;
 
   bool? _boolValue;
   bool? get boolValue => _$this._boolValue;
@@ -993,7 +990,7 @@ class GGetDeviceData_deviceInfo_history_firstPointBuilder
     final $v = _$v;
     if ($v != null) {
       _G__typename = $v.G__typename;
-      _stamp = $v.stamp.toBuilder();
+      _stamp = $v.stamp;
       _boolValue = $v.boolValue;
       _intValue = $v.intValue;
       _floatValue = $v.floatValue;
@@ -1020,32 +1017,16 @@ class GGetDeviceData_deviceInfo_history_firstPointBuilder
   GGetDeviceData_deviceInfo_history_firstPoint build() => _build();
 
   _$GGetDeviceData_deviceInfo_history_firstPoint _build() {
-    _$GGetDeviceData_deviceInfo_history_firstPoint _$result;
-    try {
-      _$result = _$v ??
-          new _$GGetDeviceData_deviceInfo_history_firstPoint._(
-              G__typename: BuiltValueNullFieldError.checkNotNull(
-                  G__typename,
-                  r'GGetDeviceData_deviceInfo_history_firstPoint',
-                  'G__typename'),
-              stamp: stamp.build(),
-              boolValue: boolValue,
-              intValue: intValue,
-              floatValue: floatValue,
-              stringValue: stringValue);
-    } catch (_) {
-      late String _$failedField;
-      try {
-        _$failedField = 'stamp';
-        stamp.build();
-      } catch (e) {
-        throw new BuiltValueNestedFieldError(
-            r'GGetDeviceData_deviceInfo_history_firstPoint',
-            _$failedField,
-            e.toString());
-      }
-      rethrow;
-    }
+    final _$result = _$v ??
+        new _$GGetDeviceData_deviceInfo_history_firstPoint._(
+            G__typename: BuiltValueNullFieldError.checkNotNull(G__typename,
+                r'GGetDeviceData_deviceInfo_history_firstPoint', 'G__typename'),
+            stamp: BuiltValueNullFieldError.checkNotNull(stamp,
+                r'GGetDeviceData_deviceInfo_history_firstPoint', 'stamp'),
+            boolValue: boolValue,
+            intValue: intValue,
+            floatValue: floatValue,
+            stringValue: stringValue);
     replace(_$result);
     return _$result;
   }
@@ -1056,7 +1037,7 @@ class _$GGetDeviceData_deviceInfo_history_lastPoint
   @override
   final String G__typename;
   @override
-  final _i2.GDateTimeUtc stamp;
+  final DateTime stamp;
   @override
   final bool? boolValue;
   @override
@@ -1146,10 +1127,9 @@ class GGetDeviceData_deviceInfo_history_lastPointBuilder
   String? get G__typename => _$this._G__typename;
   set G__typename(String? G__typename) => _$this._G__typename = G__typename;
 
-  _i2.GDateTimeUtcBuilder? _stamp;
-  _i2.GDateTimeUtcBuilder get stamp =>
-      _$this._stamp ??= new _i2.GDateTimeUtcBuilder();
-  set stamp(_i2.GDateTimeUtcBuilder? stamp) => _$this._stamp = stamp;
+  DateTime? _stamp;
+  DateTime? get stamp => _$this._stamp;
+  set stamp(DateTime? stamp) => _$this._stamp = stamp;
 
   bool? _boolValue;
   bool? get boolValue => _$this._boolValue;
@@ -1175,7 +1155,7 @@ class GGetDeviceData_deviceInfo_history_lastPointBuilder
     final $v = _$v;
     if ($v != null) {
       _G__typename = $v.G__typename;
-      _stamp = $v.stamp.toBuilder();
+      _stamp = $v.stamp;
       _boolValue = $v.boolValue;
       _intValue = $v.intValue;
       _floatValue = $v.floatValue;
@@ -1202,32 +1182,16 @@ class GGetDeviceData_deviceInfo_history_lastPointBuilder
   GGetDeviceData_deviceInfo_history_lastPoint build() => _build();
 
   _$GGetDeviceData_deviceInfo_history_lastPoint _build() {
-    _$GGetDeviceData_deviceInfo_history_lastPoint _$result;
-    try {
-      _$result = _$v ??
-          new _$GGetDeviceData_deviceInfo_history_lastPoint._(
-              G__typename: BuiltValueNullFieldError.checkNotNull(
-                  G__typename,
-                  r'GGetDeviceData_deviceInfo_history_lastPoint',
-                  'G__typename'),
-              stamp: stamp.build(),
-              boolValue: boolValue,
-              intValue: intValue,
-              floatValue: floatValue,
-              stringValue: stringValue);
-    } catch (_) {
-      late String _$failedField;
-      try {
-        _$failedField = 'stamp';
-        stamp.build();
-      } catch (e) {
-        throw new BuiltValueNestedFieldError(
-            r'GGetDeviceData_deviceInfo_history_lastPoint',
-            _$failedField,
-            e.toString());
-      }
-      rethrow;
-    }
+    final _$result = _$v ??
+        new _$GGetDeviceData_deviceInfo_history_lastPoint._(
+            G__typename: BuiltValueNullFieldError.checkNotNull(G__typename,
+                r'GGetDeviceData_deviceInfo_history_lastPoint', 'G__typename'),
+            stamp: BuiltValueNullFieldError.checkNotNull(
+                stamp, r'GGetDeviceData_deviceInfo_history_lastPoint', 'stamp'),
+            boolValue: boolValue,
+            intValue: intValue,
+            floatValue: floatValue,
+            stringValue: stringValue);
     replace(_$result);
     return _$result;
   }
