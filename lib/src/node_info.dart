@@ -47,14 +47,9 @@ class NodeInfo {
   /// Specifies the Graphql URL endpoint used for subscription.
   final String subscriptions;
 
-  /// This field indicates the detection of the node on the location netwok.
-  /// In other words, if an mDNS announcement is received for a node, this field
-  /// will be `true`. If the node stops, this field will go to `false`. Nodes
-  /// not on the local network may still be accessible, even though this field
-  /// is `false`.
-  bool reporting;
+  /// [NodeInfo] constructor.
 
-  NodeInfo(
+  const NodeInfo(
       {required this.name,
       required this.version,
       required this.location,
@@ -64,8 +59,10 @@ class NodeInfo {
       required this.bootTime,
       required this.queries,
       required this.mutations,
-      required this.subscriptions})
-      : reporting = false;
+      required this.subscriptions});
+
+  /// Converts a [NodeInfo] object into a map which can be used to generate
+  /// JSON values.
 
   Map<String, dynamic> toJson() => {
         'name': name,
