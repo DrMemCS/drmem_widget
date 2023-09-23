@@ -2,6 +2,7 @@
 library;
 
 import 'dart:developer' as developer;
+import 'package:flutter/foundation.dart';
 
 /// Holds information about DrMem nodes. This information is obtained via the
 /// mDNS announcements and by querying the node.
@@ -64,18 +65,29 @@ class NodeInfo {
   /// Converts a [NodeInfo] object into a map which can be used to generate
   /// JSON values.
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'version': version,
-        'location': location,
-        'host': host,
-        'port': port,
-        'signature': signature,
-        'bootTime': bootTime,
-        'queries': queries,
-        'mutations': mutations,
-        'subscriptions': subscriptions
-      };
+  Map<String, dynamic> toJson() {
+    var v = {
+      'name': name,
+      'version': version,
+      'location': location,
+      'host': host,
+      'port': port,
+      'bootTime': bootTime,
+      'queries': queries,
+      'mutations': mutations,
+      'subscriptions': subscriptions
+    };
+
+    if (signature != null) {
+      v['signature'] = signature!;
+    }
+
+    return v;
+  }
+
+  /// Converts a map back into a [NodeInfo] object. If there are
+  /// missing fields, or a field is of the incorrect type, this
+  /// function returns `null`.
 
   static NodeInfo? fromJson(Map<String, dynamic> json) {
     if (json
@@ -85,23 +97,26 @@ class NodeInfo {
           'location': String location,
           'host': List<String> host,
           'port': int port,
-          'signature': String? signature,
           'bootTime': DateTime bootTime,
           'queries': String queries,
           'mutations': String mutations,
           'subscriptions': String subscriptions
         }) {
-      return NodeInfo(
-          name: name,
-          version: version,
-          location: location,
-          host: host,
-          port: port,
-          signature: signature,
-          bootTime: bootTime,
-          queries: queries,
-          mutations: mutations,
-          subscriptions: subscriptions);
+      final sig = json['signature'];
+
+      if (sig == null || sig is String) {
+        return NodeInfo(
+            name: name,
+            version: version,
+            location: location,
+            host: host,
+            port: port,
+            signature: sig,
+            bootTime: bootTime,
+            queries: queries,
+            mutations: mutations,
+            subscriptions: subscriptions);
+      }
     }
     developer.log("couldn't restore node info for $json ... dropping from list",
         name: "NodeInfo.fromJson");
