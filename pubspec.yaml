@@ -16,6 +16,8 @@ dependencies:
   ferry: ^0.14.2+1
   ferry_flutter: ^0.8.1
 
+  built_value: ^8.6.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
