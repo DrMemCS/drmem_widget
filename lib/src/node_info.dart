@@ -122,4 +122,39 @@ class NodeInfo {
         name: "NodeInfo.fromJson");
     return null;
   }
+
+  /// Determines whether the [nodeInfo] argument is a valid update to the
+  /// current object. If a DrMem node gets updated, its version number may
+  /// change, or, the maintainer may change the preferred IP address (so it
+  /// may be accessed outside their home, for instance.) But we must do some
+  /// due diligence; we don't want someone's malicious, local node overwriting
+  /// the config for a personal node.
+  ///
+  /// An update is considered acceptable if the names are the same and either
+  /// the current node hasn't defined a digital signature or it has and the
+  /// replacement info has the same signature.
+
+  bool canUpdate(NodeInfo o) =>
+      name == o.name && (signature == null || signature == o.signature);
+
+  @override
+  bool operator ==(Object other) =>
+      other is NodeInfo &&
+      name == other.name &&
+      version == other.version &&
+      location == other.location &&
+      listEquals(host, other.host) &&
+      port == other.port &&
+      signature == other.signature &&
+      bootTime == other.bootTime &&
+      queries == other.queries &&
+      mutations == other.mutations &&
+      subscriptions == other.subscriptions;
+
+  @override
+  int get hashCode => name.hashCode;
+
+  @override
+  String toString() =>
+      "{name: $name, version: $version, location: $location, host: $host, port: $port, bootTime: $bootTime, queries: $queries, mutations: $mutations, subscriptions: $subscriptions, signature: $signature }";
 }
