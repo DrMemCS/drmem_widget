@@ -8,6 +8,9 @@ targets:
           type_overrides:
             DateTimeUtc:
               name: DateTime
+          custom_serializers:
+            - import: "../date_serializer.dart"
+              name: DateSerializer
       ferry_generator|graphql_builder:
         enabled: true
         options:

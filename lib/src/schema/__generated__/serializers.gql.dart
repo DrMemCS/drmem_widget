@@ -51,10 +51,13 @@ import 'package:ferry_exec/ferry_exec.dart';
 import 'package:gql_code_builder/src/serializers/operation_serializer.dart'
     show OperationSerializer;
 
+import '../date_serializer.dart' show DateSerializer;
+
 part 'serializers.gql.g.dart';
 
 final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   ..add(OperationSerializer())
+  ..add(DateSerializer())
   ..addPlugin(StandardJsonPlugin());
 @SerializersFor([
   GAllDriversData,
