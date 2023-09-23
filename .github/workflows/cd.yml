@@ -1,0 +1,40 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - "main"
+
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+
+  UnitTest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checking out source code
+        uses: actions/checkout@v3
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: flutter-install-cache
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Resolving dependencies
+        run: flutter pub get
+
+      - name: Linting
+        run: flutter analyze .
+
+      - name: Running unit tests
+        run: |
+          flutter test
