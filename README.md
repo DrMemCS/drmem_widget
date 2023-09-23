@@ -19,11 +19,12 @@ application which uses this widget.
 
 ## Getting started
 
-Add this package to your app's dependencies:
+Add this and the `gql_code_builder` packages to your app's dependencies:
 
 ```yaml
 dependencies:
   drmem_provider: ^0.1.0
+  gql_code_builder: ^0.8.0
 ```
 
 ## Usage
