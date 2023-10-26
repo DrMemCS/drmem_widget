@@ -116,6 +116,7 @@ abstract class GGetDeviceData_deviceInfo_history_firstPoint
   int? get intValue;
   double? get floatValue;
   String? get stringValue;
+  BuiltList<int>? get colorValue;
   static Serializer<GGetDeviceData_deviceInfo_history_firstPoint>
       get serializer => _$gGetDeviceDataDeviceInfoHistoryFirstPointSerializer;
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
@@ -150,6 +151,7 @@ abstract class GGetDeviceData_deviceInfo_history_lastPoint
   int? get intValue;
   double? get floatValue;
   String? get stringValue;
+  BuiltList<int>? get colorValue;
   static Serializer<GGetDeviceData_deviceInfo_history_lastPoint>
       get serializer => _$gGetDeviceDataDeviceInfoHistoryLastPointSerializer;
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(

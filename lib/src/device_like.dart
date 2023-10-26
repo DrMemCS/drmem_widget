@@ -1,5 +1,7 @@
 /// Base class for Device-like types. All device-like types have a "name" field.
 
+library;
+
 sealed class DeviceLike {
   final String name;
 

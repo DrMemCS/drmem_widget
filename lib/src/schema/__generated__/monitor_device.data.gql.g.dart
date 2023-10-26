@@ -114,6 +114,14 @@ class _$GMonitorDeviceData_monitorDeviceSerializer
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
+    value = object.colorValue;
+    if (value != null) {
+      result
+        ..add('colorValue')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(int)])));
+    }
     return result;
   }
 
@@ -152,6 +160,12 @@ class _$GMonitorDeviceData_monitorDeviceSerializer
         case 'stringValue':
           result.stringValue = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
+          break;
+        case 'colorValue':
+          result.colorValue.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(BuiltList, const [const FullType(int)]))!
+              as BuiltList<Object?>);
           break;
       }
     }
@@ -294,6 +308,8 @@ class _$GMonitorDeviceData_monitorDevice
   final double? floatValue;
   @override
   final String? stringValue;
+  @override
+  final BuiltList<int>? colorValue;
 
   factory _$GMonitorDeviceData_monitorDevice(
           [void Function(GMonitorDeviceData_monitorDeviceBuilder)? updates]) =>
@@ -305,7 +321,8 @@ class _$GMonitorDeviceData_monitorDevice
       this.boolValue,
       this.intValue,
       this.floatValue,
-      this.stringValue})
+      this.stringValue,
+      this.colorValue})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         G__typename, r'GMonitorDeviceData_monitorDevice', 'G__typename');
@@ -331,7 +348,8 @@ class _$GMonitorDeviceData_monitorDevice
         boolValue == other.boolValue &&
         intValue == other.intValue &&
         floatValue == other.floatValue &&
-        stringValue == other.stringValue;
+        stringValue == other.stringValue &&
+        colorValue == other.colorValue;
   }
 
   @override
@@ -343,6 +361,7 @@ class _$GMonitorDeviceData_monitorDevice
     _$hash = $jc(_$hash, intValue.hashCode);
     _$hash = $jc(_$hash, floatValue.hashCode);
     _$hash = $jc(_$hash, stringValue.hashCode);
+    _$hash = $jc(_$hash, colorValue.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -355,7 +374,8 @@ class _$GMonitorDeviceData_monitorDevice
           ..add('boolValue', boolValue)
           ..add('intValue', intValue)
           ..add('floatValue', floatValue)
-          ..add('stringValue', stringValue))
+          ..add('stringValue', stringValue)
+          ..add('colorValue', colorValue))
         .toString();
   }
 }
@@ -390,6 +410,12 @@ class GMonitorDeviceData_monitorDeviceBuilder
   String? get stringValue => _$this._stringValue;
   set stringValue(String? stringValue) => _$this._stringValue = stringValue;
 
+  ListBuilder<int>? _colorValue;
+  ListBuilder<int> get colorValue =>
+      _$this._colorValue ??= new ListBuilder<int>();
+  set colorValue(ListBuilder<int>? colorValue) =>
+      _$this._colorValue = colorValue;
+
   GMonitorDeviceData_monitorDeviceBuilder() {
     GMonitorDeviceData_monitorDevice._initializeBuilder(this);
   }
@@ -403,6 +429,7 @@ class GMonitorDeviceData_monitorDeviceBuilder
       _intValue = $v.intValue;
       _floatValue = $v.floatValue;
       _stringValue = $v.stringValue;
+      _colorValue = $v.colorValue?.toBuilder();
       _$v = null;
     }
     return this;
@@ -423,16 +450,30 @@ class GMonitorDeviceData_monitorDeviceBuilder
   GMonitorDeviceData_monitorDevice build() => _build();
 
   _$GMonitorDeviceData_monitorDevice _build() {
-    final _$result = _$v ??
-        new _$GMonitorDeviceData_monitorDevice._(
-            G__typename: BuiltValueNullFieldError.checkNotNull(G__typename,
-                r'GMonitorDeviceData_monitorDevice', 'G__typename'),
-            stamp: BuiltValueNullFieldError.checkNotNull(
-                stamp, r'GMonitorDeviceData_monitorDevice', 'stamp'),
-            boolValue: boolValue,
-            intValue: intValue,
-            floatValue: floatValue,
-            stringValue: stringValue);
+    _$GMonitorDeviceData_monitorDevice _$result;
+    try {
+      _$result = _$v ??
+          new _$GMonitorDeviceData_monitorDevice._(
+              G__typename: BuiltValueNullFieldError.checkNotNull(G__typename,
+                  r'GMonitorDeviceData_monitorDevice', 'G__typename'),
+              stamp: BuiltValueNullFieldError.checkNotNull(
+                  stamp, r'GMonitorDeviceData_monitorDevice', 'stamp'),
+              boolValue: boolValue,
+              intValue: intValue,
+              floatValue: floatValue,
+              stringValue: stringValue,
+              colorValue: _colorValue?.build());
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'colorValue';
+        _colorValue?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            r'GMonitorDeviceData_monitorDevice', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

@@ -91,6 +91,13 @@ const GetAllDevices = _i1.OperationDefinitionNode(
                   directives: [],
                   selectionSet: null,
                 ),
+                _i1.FieldNode(
+                  name: _i1.NameNode(value: 'colorValue'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null,
+                ),
               ]),
             ),
             _i1.FieldNode(
@@ -129,6 +136,13 @@ const GetAllDevices = _i1.OperationDefinitionNode(
                 ),
                 _i1.FieldNode(
                   name: _i1.NameNode(value: 'stringValue'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null,
+                ),
+                _i1.FieldNode(
+                  name: _i1.NameNode(value: 'colorValue'),
                   alias: null,
                   arguments: [],
                   directives: [],

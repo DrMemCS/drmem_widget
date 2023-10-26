@@ -17,6 +17,9 @@ input SettingData {
 
   # Placeholder for string values.
   str: String
+
+  # Placeholder for color values.
+  color: [Int!]
 }
 
 # Reports configuration information for `drmemd`.
@@ -83,6 +86,9 @@ type Reading {
 
   # Placeholder for string values.
   stringValue: String
+
+  # Placeholdr for Color
+  colorValue: [Int!]
 }
 
 input DateRange {

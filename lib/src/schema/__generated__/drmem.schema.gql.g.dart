@@ -48,6 +48,14 @@ class _$GSettingDataSerializer implements StructuredSerializer<GSettingData> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
+    value = object.color;
+    if (value != null) {
+      result
+        ..add('color')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(int)])));
+    }
     return result;
   }
 
@@ -78,6 +86,12 @@ class _$GSettingDataSerializer implements StructuredSerializer<GSettingData> {
         case 'str':
           result.str = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
+          break;
+        case 'color':
+          result.color.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(BuiltList, const [const FullType(int)]))!
+              as BuiltList<Object?>);
           break;
       }
     }
@@ -149,11 +163,14 @@ class _$GSettingData extends GSettingData {
   final bool? Gbool;
   @override
   final String? str;
+  @override
+  final BuiltList<int>? color;
 
   factory _$GSettingData([void Function(GSettingDataBuilder)? updates]) =>
       (new GSettingDataBuilder()..update(updates))._build();
 
-  _$GSettingData._({this.Gint, this.flt, this.Gbool, this.str}) : super._();
+  _$GSettingData._({this.Gint, this.flt, this.Gbool, this.str, this.color})
+      : super._();
 
   @override
   GSettingData rebuild(void Function(GSettingDataBuilder) updates) =>
@@ -169,7 +186,8 @@ class _$GSettingData extends GSettingData {
         Gint == other.Gint &&
         flt == other.flt &&
         Gbool == other.Gbool &&
-        str == other.str;
+        str == other.str &&
+        color == other.color;
   }
 
   @override
@@ -179,6 +197,7 @@ class _$GSettingData extends GSettingData {
     _$hash = $jc(_$hash, flt.hashCode);
     _$hash = $jc(_$hash, Gbool.hashCode);
     _$hash = $jc(_$hash, str.hashCode);
+    _$hash = $jc(_$hash, color.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -189,7 +208,8 @@ class _$GSettingData extends GSettingData {
           ..add('Gint', Gint)
           ..add('flt', flt)
           ..add('Gbool', Gbool)
-          ..add('str', str))
+          ..add('str', str)
+          ..add('color', color))
         .toString();
   }
 }
@@ -214,6 +234,10 @@ class GSettingDataBuilder
   String? get str => _$this._str;
   set str(String? str) => _$this._str = str;
 
+  ListBuilder<int>? _color;
+  ListBuilder<int> get color => _$this._color ??= new ListBuilder<int>();
+  set color(ListBuilder<int>? color) => _$this._color = color;
+
   GSettingDataBuilder();
 
   GSettingDataBuilder get _$this {
@@ -223,6 +247,7 @@ class GSettingDataBuilder
       _flt = $v.flt;
       _Gbool = $v.Gbool;
       _str = $v.str;
+      _color = $v.color?.toBuilder();
       _$v = null;
     }
     return this;
@@ -243,8 +268,26 @@ class GSettingDataBuilder
   GSettingData build() => _build();
 
   _$GSettingData _build() {
-    final _$result = _$v ??
-        new _$GSettingData._(Gint: Gint, flt: flt, Gbool: Gbool, str: str);
+    _$GSettingData _$result;
+    try {
+      _$result = _$v ??
+          new _$GSettingData._(
+              Gint: Gint,
+              flt: flt,
+              Gbool: Gbool,
+              str: str,
+              color: _color?.build());
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'color';
+        _color?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            r'GSettingData', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

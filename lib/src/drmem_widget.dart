@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import "package:gql_websocket_link/gql_websocket_link.dart";
 import 'package:gql_http_link/gql_http_link.dart';
 import 'package:ferry/ferry.dart';
+import 'package:built_collection/built_collection.dart';
 import 'schema/__generated__/set_device.data.gql.dart';
 import 'schema/__generated__/set_device.req.gql.dart';
 import 'schema/__generated__/drmem.schema.gql.dart';
@@ -31,7 +32,9 @@ extension on DevValue {
         DevBool(value: bool value) => GSettingDataBuilder()..Gbool = value,
         DevInt(value: int value) => GSettingDataBuilder()..Gint = value,
         DevFlt(value: double value) => GSettingDataBuilder()..flt = value,
-        DevStr(value: String value) => GSettingDataBuilder()..str = value
+        DevStr(value: String value) => GSettingDataBuilder()..str = value,
+        DevColor(red: int r, green: int g, blue: int b) => GSettingDataBuilder()
+          ..color = ListBuilder([r, g, b])
       };
 }
 
@@ -46,10 +49,20 @@ extension on GGetDeviceData_deviceInfo_history {
 
       return DeviceHistory(
           totalPoints,
-          _Convert.fromParams(oldest.stamp, oldest.boolValue, oldest.intValue,
-              oldest.floatValue, oldest.stringValue),
-          _Convert.fromParams(newest.stamp, newest.boolValue, newest.intValue,
-              newest.floatValue, newest.stringValue));
+          _Convert.fromParams(
+              oldest.stamp,
+              oldest.boolValue,
+              oldest.intValue,
+              oldest.floatValue,
+              oldest.stringValue,
+              oldest.colorValue?.toList()),
+          _Convert.fromParams(
+              newest.stamp,
+              newest.boolValue,
+              newest.intValue,
+              newest.floatValue,
+              newest.stringValue,
+              newest.colorValue?.toList()));
     } else {
       return null;
     }
@@ -59,23 +72,25 @@ extension on GGetDeviceData_deviceInfo_history {
 extension on GSetDeviceData_setDevice {
   // Creates a [Reading] value from a GraphQL [setDevice] reply value.
 
-  Reading toReading() =>
-      _Convert.fromParams(stamp, boolValue, intValue, floatValue, stringValue);
+  Reading toReading() => _Convert.fromParams(stamp, boolValue, intValue,
+      floatValue, stringValue, colorValue?.toList());
 }
 
 extension _Convert on Reading {
   // Creates a [Reading] value from a set of values.
 
   static Reading fromParams(
-          DateTime dt, bool? b, int? i, double? d, String? s) =>
+          DateTime dt, bool? b, int? i, double? d, String? s, List<int>? c) =>
       Reading(
           dt,
-          switch ((b, i, d, s)) {
-            (_, null, null, null) when b != null => DevBool(value: b),
-            (null, _, null, null) when i != null => DevInt(value: i),
-            (null, null, _, null) when d != null => DevFlt(value: d),
-            (null, null, null, _) when s != null => DevStr(value: s),
-            (null, null, null, null) =>
+          switch ((b, i, d, s, c)) {
+            (_, null, null, null, null) when b != null => DevBool(value: b),
+            (null, _, null, null, null) when i != null => DevInt(value: i),
+            (null, null, _, null, null) when d != null => DevFlt(value: d),
+            (null, null, null, _, null) when s != null => DevStr(value: s),
+            (null, null, null, null, [int r, int g, int b]) =>
+              DevColor(red: r, green: g, blue: b),
+            (null, null, null, null, null) =>
               throw (Exception("reading has no data")),
             _ => throw (Exception("reading has multiple value types"))
           });
@@ -336,7 +351,12 @@ class DrMem extends InheritedWidget {
           ..vars.range = _buildDateRange(startTime, endTime)))
         .where((response) => !response.loading && response.data != null)
         .map((response) => response.data!.monitorDevice)
-        .map((data) => _Convert.fromParams(data.stamp, data.boolValue,
-            data.intValue, data.floatValue, data.stringValue));
+        .map((data) => _Convert.fromParams(
+            data.stamp,
+            data.boolValue,
+            data.intValue,
+            data.floatValue,
+            data.stringValue,
+            data.colorValue?.toList()));
   }
 }

@@ -6,6 +6,8 @@
 /// encoding it into one of these types.
 library;
 
+import "dart:math";
+
 /// The base class for all types returned by a device. This class is `sealed`
 /// so new variants can't be created outside of this module.
 sealed class DevValue {
@@ -38,4 +40,15 @@ class DevStr extends DevValue {
   final String value;
 
   const DevStr({required this.value});
+}
+
+class DevColor extends DevValue {
+  final int red;
+  final int green;
+  final int blue;
+
+  DevColor({required red, required green, required blue})
+      : red = min(255, max(0, red)),
+        green = min(255, max(0, green)),
+        blue = min(255, max(0, blue));
 }
