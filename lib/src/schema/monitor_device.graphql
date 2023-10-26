@@ -5,5 +5,6 @@ subscription MonitorDevice($device: String!, $range: DateRange) {
     intValue
     floatValue
     stringValue
+    colorValue
   }
 }

@@ -111,6 +111,14 @@ class _$GSetDeviceData_setDeviceSerializer
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
+    value = object.colorValue;
+    if (value != null) {
+      result
+        ..add('colorValue')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(int)])));
+    }
     return result;
   }
 
@@ -149,6 +157,12 @@ class _$GSetDeviceData_setDeviceSerializer
         case 'stringValue':
           result.stringValue = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
+          break;
+        case 'colorValue':
+          result.colorValue.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(BuiltList, const [const FullType(int)]))!
+              as BuiltList<Object?>);
           break;
       }
     }
@@ -287,6 +301,8 @@ class _$GSetDeviceData_setDevice extends GSetDeviceData_setDevice {
   final double? floatValue;
   @override
   final String? stringValue;
+  @override
+  final BuiltList<int>? colorValue;
 
   factory _$GSetDeviceData_setDevice(
           [void Function(GSetDeviceData_setDeviceBuilder)? updates]) =>
@@ -298,7 +314,8 @@ class _$GSetDeviceData_setDevice extends GSetDeviceData_setDevice {
       this.boolValue,
       this.intValue,
       this.floatValue,
-      this.stringValue})
+      this.stringValue,
+      this.colorValue})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         G__typename, r'GSetDeviceData_setDevice', 'G__typename');
@@ -324,7 +341,8 @@ class _$GSetDeviceData_setDevice extends GSetDeviceData_setDevice {
         boolValue == other.boolValue &&
         intValue == other.intValue &&
         floatValue == other.floatValue &&
-        stringValue == other.stringValue;
+        stringValue == other.stringValue &&
+        colorValue == other.colorValue;
   }
 
   @override
@@ -336,6 +354,7 @@ class _$GSetDeviceData_setDevice extends GSetDeviceData_setDevice {
     _$hash = $jc(_$hash, intValue.hashCode);
     _$hash = $jc(_$hash, floatValue.hashCode);
     _$hash = $jc(_$hash, stringValue.hashCode);
+    _$hash = $jc(_$hash, colorValue.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -348,7 +367,8 @@ class _$GSetDeviceData_setDevice extends GSetDeviceData_setDevice {
           ..add('boolValue', boolValue)
           ..add('intValue', intValue)
           ..add('floatValue', floatValue)
-          ..add('stringValue', stringValue))
+          ..add('stringValue', stringValue)
+          ..add('colorValue', colorValue))
         .toString();
   }
 }
@@ -382,6 +402,12 @@ class GSetDeviceData_setDeviceBuilder
   String? get stringValue => _$this._stringValue;
   set stringValue(String? stringValue) => _$this._stringValue = stringValue;
 
+  ListBuilder<int>? _colorValue;
+  ListBuilder<int> get colorValue =>
+      _$this._colorValue ??= new ListBuilder<int>();
+  set colorValue(ListBuilder<int>? colorValue) =>
+      _$this._colorValue = colorValue;
+
   GSetDeviceData_setDeviceBuilder() {
     GSetDeviceData_setDevice._initializeBuilder(this);
   }
@@ -395,6 +421,7 @@ class GSetDeviceData_setDeviceBuilder
       _intValue = $v.intValue;
       _floatValue = $v.floatValue;
       _stringValue = $v.stringValue;
+      _colorValue = $v.colorValue?.toBuilder();
       _$v = null;
     }
     return this;
@@ -415,16 +442,30 @@ class GSetDeviceData_setDeviceBuilder
   GSetDeviceData_setDevice build() => _build();
 
   _$GSetDeviceData_setDevice _build() {
-    final _$result = _$v ??
-        new _$GSetDeviceData_setDevice._(
-            G__typename: BuiltValueNullFieldError.checkNotNull(
-                G__typename, r'GSetDeviceData_setDevice', 'G__typename'),
-            stamp: BuiltValueNullFieldError.checkNotNull(
-                stamp, r'GSetDeviceData_setDevice', 'stamp'),
-            boolValue: boolValue,
-            intValue: intValue,
-            floatValue: floatValue,
-            stringValue: stringValue);
+    _$GSetDeviceData_setDevice _$result;
+    try {
+      _$result = _$v ??
+          new _$GSetDeviceData_setDevice._(
+              G__typename: BuiltValueNullFieldError.checkNotNull(
+                  G__typename, r'GSetDeviceData_setDevice', 'G__typename'),
+              stamp: BuiltValueNullFieldError.checkNotNull(
+                  stamp, r'GSetDeviceData_setDevice', 'stamp'),
+              boolValue: boolValue,
+              intValue: intValue,
+              floatValue: floatValue,
+              stringValue: stringValue,
+              colorValue: _colorValue?.build());
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'colorValue';
+        _colorValue?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            r'GSetDeviceData_setDevice', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

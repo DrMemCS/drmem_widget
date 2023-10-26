@@ -2,6 +2,7 @@
 // ignore_for_file: type=lint
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:drmem_provider/src/schema/__generated__/serializers.gql.dart'
@@ -52,6 +53,7 @@ abstract class GSetDeviceData_setDevice
   int? get intValue;
   double? get floatValue;
   String? get stringValue;
+  BuiltList<int>? get colorValue;
   static Serializer<GSetDeviceData_setDevice> get serializer =>
       _$gSetDeviceDataSetDeviceSerializer;
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(

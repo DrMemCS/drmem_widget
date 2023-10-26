@@ -119,6 +119,7 @@ abstract class GGetAllDevicesData_deviceInfo_history_firstPoint
   int? get intValue;
   double? get floatValue;
   String? get stringValue;
+  BuiltList<int>? get colorValue;
   static Serializer<GGetAllDevicesData_deviceInfo_history_firstPoint>
       get serializer =>
           _$gGetAllDevicesDataDeviceInfoHistoryFirstPointSerializer;
@@ -154,6 +155,7 @@ abstract class GGetAllDevicesData_deviceInfo_history_lastPoint
   int? get intValue;
   double? get floatValue;
   String? get stringValue;
+  BuiltList<int>? get colorValue;
   static Serializer<GGetAllDevicesData_deviceInfo_history_lastPoint>
       get serializer =>
           _$gGetAllDevicesDataDeviceInfoHistoryLastPointSerializer;

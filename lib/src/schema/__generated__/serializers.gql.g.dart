@@ -48,7 +48,28 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(
               BuiltList, const [const FullType(GGetDeviceData_deviceInfo)]),
-          () => new ListBuilder<GGetDeviceData_deviceInfo>()))
+          () => new ListBuilder<GGetDeviceData_deviceInfo>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(int)]),
+          () => new ListBuilder<int>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(int)]),
+          () => new ListBuilder<int>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(int)]),
+          () => new ListBuilder<int>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(int)]),
+          () => new ListBuilder<int>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(int)]),
+          () => new ListBuilder<int>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(int)]),
+          () => new ListBuilder<int>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(int)]),
+          () => new ListBuilder<int>()))
     .build();
 
 // ignore_for_file: deprecated_member_use_from_same_package,type=lint

@@ -284,6 +284,14 @@ class _$GGetDeviceData_deviceInfo_history_firstPointSerializer
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
+    value = object.colorValue;
+    if (value != null) {
+      result
+        ..add('colorValue')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(int)])));
+    }
     return result;
   }
 
@@ -322,6 +330,12 @@ class _$GGetDeviceData_deviceInfo_history_firstPointSerializer
         case 'stringValue':
           result.stringValue = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
+          break;
+        case 'colorValue':
+          result.colorValue.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(BuiltList, const [const FullType(int)]))!
+              as BuiltList<Object?>);
           break;
       }
     }
@@ -381,6 +395,14 @@ class _$GGetDeviceData_deviceInfo_history_lastPointSerializer
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
+    value = object.colorValue;
+    if (value != null) {
+      result
+        ..add('colorValue')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(int)])));
+    }
     return result;
   }
 
@@ -419,6 +441,12 @@ class _$GGetDeviceData_deviceInfo_history_lastPointSerializer
         case 'stringValue':
           result.stringValue = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
+          break;
+        case 'colorValue':
+          result.colorValue.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(BuiltList, const [const FullType(int)]))!
+              as BuiltList<Object?>);
           break;
       }
     }
@@ -881,6 +909,8 @@ class _$GGetDeviceData_deviceInfo_history_firstPoint
   final double? floatValue;
   @override
   final String? stringValue;
+  @override
+  final BuiltList<int>? colorValue;
 
   factory _$GGetDeviceData_deviceInfo_history_firstPoint(
           [void Function(GGetDeviceData_deviceInfo_history_firstPointBuilder)?
@@ -895,7 +925,8 @@ class _$GGetDeviceData_deviceInfo_history_firstPoint
       this.boolValue,
       this.intValue,
       this.floatValue,
-      this.stringValue})
+      this.stringValue,
+      this.colorValue})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(G__typename,
         r'GGetDeviceData_deviceInfo_history_firstPoint', 'G__typename');
@@ -922,7 +953,8 @@ class _$GGetDeviceData_deviceInfo_history_firstPoint
         boolValue == other.boolValue &&
         intValue == other.intValue &&
         floatValue == other.floatValue &&
-        stringValue == other.stringValue;
+        stringValue == other.stringValue &&
+        colorValue == other.colorValue;
   }
 
   @override
@@ -934,6 +966,7 @@ class _$GGetDeviceData_deviceInfo_history_firstPoint
     _$hash = $jc(_$hash, intValue.hashCode);
     _$hash = $jc(_$hash, floatValue.hashCode);
     _$hash = $jc(_$hash, stringValue.hashCode);
+    _$hash = $jc(_$hash, colorValue.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -947,7 +980,8 @@ class _$GGetDeviceData_deviceInfo_history_firstPoint
           ..add('boolValue', boolValue)
           ..add('intValue', intValue)
           ..add('floatValue', floatValue)
-          ..add('stringValue', stringValue))
+          ..add('stringValue', stringValue)
+          ..add('colorValue', colorValue))
         .toString();
   }
 }
@@ -982,6 +1016,12 @@ class GGetDeviceData_deviceInfo_history_firstPointBuilder
   String? get stringValue => _$this._stringValue;
   set stringValue(String? stringValue) => _$this._stringValue = stringValue;
 
+  ListBuilder<int>? _colorValue;
+  ListBuilder<int> get colorValue =>
+      _$this._colorValue ??= new ListBuilder<int>();
+  set colorValue(ListBuilder<int>? colorValue) =>
+      _$this._colorValue = colorValue;
+
   GGetDeviceData_deviceInfo_history_firstPointBuilder() {
     GGetDeviceData_deviceInfo_history_firstPoint._initializeBuilder(this);
   }
@@ -995,6 +1035,7 @@ class GGetDeviceData_deviceInfo_history_firstPointBuilder
       _intValue = $v.intValue;
       _floatValue = $v.floatValue;
       _stringValue = $v.stringValue;
+      _colorValue = $v.colorValue?.toBuilder();
       _$v = null;
     }
     return this;
@@ -1017,16 +1058,34 @@ class GGetDeviceData_deviceInfo_history_firstPointBuilder
   GGetDeviceData_deviceInfo_history_firstPoint build() => _build();
 
   _$GGetDeviceData_deviceInfo_history_firstPoint _build() {
-    final _$result = _$v ??
-        new _$GGetDeviceData_deviceInfo_history_firstPoint._(
-            G__typename: BuiltValueNullFieldError.checkNotNull(G__typename,
-                r'GGetDeviceData_deviceInfo_history_firstPoint', 'G__typename'),
-            stamp: BuiltValueNullFieldError.checkNotNull(stamp,
-                r'GGetDeviceData_deviceInfo_history_firstPoint', 'stamp'),
-            boolValue: boolValue,
-            intValue: intValue,
-            floatValue: floatValue,
-            stringValue: stringValue);
+    _$GGetDeviceData_deviceInfo_history_firstPoint _$result;
+    try {
+      _$result = _$v ??
+          new _$GGetDeviceData_deviceInfo_history_firstPoint._(
+              G__typename: BuiltValueNullFieldError.checkNotNull(
+                  G__typename,
+                  r'GGetDeviceData_deviceInfo_history_firstPoint',
+                  'G__typename'),
+              stamp: BuiltValueNullFieldError.checkNotNull(stamp,
+                  r'GGetDeviceData_deviceInfo_history_firstPoint', 'stamp'),
+              boolValue: boolValue,
+              intValue: intValue,
+              floatValue: floatValue,
+              stringValue: stringValue,
+              colorValue: _colorValue?.build());
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'colorValue';
+        _colorValue?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            r'GGetDeviceData_deviceInfo_history_firstPoint',
+            _$failedField,
+            e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }
@@ -1046,6 +1105,8 @@ class _$GGetDeviceData_deviceInfo_history_lastPoint
   final double? floatValue;
   @override
   final String? stringValue;
+  @override
+  final BuiltList<int>? colorValue;
 
   factory _$GGetDeviceData_deviceInfo_history_lastPoint(
           [void Function(GGetDeviceData_deviceInfo_history_lastPointBuilder)?
@@ -1060,7 +1121,8 @@ class _$GGetDeviceData_deviceInfo_history_lastPoint
       this.boolValue,
       this.intValue,
       this.floatValue,
-      this.stringValue})
+      this.stringValue,
+      this.colorValue})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(G__typename,
         r'GGetDeviceData_deviceInfo_history_lastPoint', 'G__typename');
@@ -1087,7 +1149,8 @@ class _$GGetDeviceData_deviceInfo_history_lastPoint
         boolValue == other.boolValue &&
         intValue == other.intValue &&
         floatValue == other.floatValue &&
-        stringValue == other.stringValue;
+        stringValue == other.stringValue &&
+        colorValue == other.colorValue;
   }
 
   @override
@@ -1099,6 +1162,7 @@ class _$GGetDeviceData_deviceInfo_history_lastPoint
     _$hash = $jc(_$hash, intValue.hashCode);
     _$hash = $jc(_$hash, floatValue.hashCode);
     _$hash = $jc(_$hash, stringValue.hashCode);
+    _$hash = $jc(_$hash, colorValue.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -1112,7 +1176,8 @@ class _$GGetDeviceData_deviceInfo_history_lastPoint
           ..add('boolValue', boolValue)
           ..add('intValue', intValue)
           ..add('floatValue', floatValue)
-          ..add('stringValue', stringValue))
+          ..add('stringValue', stringValue)
+          ..add('colorValue', colorValue))
         .toString();
   }
 }
@@ -1147,6 +1212,12 @@ class GGetDeviceData_deviceInfo_history_lastPointBuilder
   String? get stringValue => _$this._stringValue;
   set stringValue(String? stringValue) => _$this._stringValue = stringValue;
 
+  ListBuilder<int>? _colorValue;
+  ListBuilder<int> get colorValue =>
+      _$this._colorValue ??= new ListBuilder<int>();
+  set colorValue(ListBuilder<int>? colorValue) =>
+      _$this._colorValue = colorValue;
+
   GGetDeviceData_deviceInfo_history_lastPointBuilder() {
     GGetDeviceData_deviceInfo_history_lastPoint._initializeBuilder(this);
   }
@@ -1160,6 +1231,7 @@ class GGetDeviceData_deviceInfo_history_lastPointBuilder
       _intValue = $v.intValue;
       _floatValue = $v.floatValue;
       _stringValue = $v.stringValue;
+      _colorValue = $v.colorValue?.toBuilder();
       _$v = null;
     }
     return this;
@@ -1182,16 +1254,34 @@ class GGetDeviceData_deviceInfo_history_lastPointBuilder
   GGetDeviceData_deviceInfo_history_lastPoint build() => _build();
 
   _$GGetDeviceData_deviceInfo_history_lastPoint _build() {
-    final _$result = _$v ??
-        new _$GGetDeviceData_deviceInfo_history_lastPoint._(
-            G__typename: BuiltValueNullFieldError.checkNotNull(G__typename,
-                r'GGetDeviceData_deviceInfo_history_lastPoint', 'G__typename'),
-            stamp: BuiltValueNullFieldError.checkNotNull(
-                stamp, r'GGetDeviceData_deviceInfo_history_lastPoint', 'stamp'),
-            boolValue: boolValue,
-            intValue: intValue,
-            floatValue: floatValue,
-            stringValue: stringValue);
+    _$GGetDeviceData_deviceInfo_history_lastPoint _$result;
+    try {
+      _$result = _$v ??
+          new _$GGetDeviceData_deviceInfo_history_lastPoint._(
+              G__typename: BuiltValueNullFieldError.checkNotNull(
+                  G__typename,
+                  r'GGetDeviceData_deviceInfo_history_lastPoint',
+                  'G__typename'),
+              stamp: BuiltValueNullFieldError.checkNotNull(stamp,
+                  r'GGetDeviceData_deviceInfo_history_lastPoint', 'stamp'),
+              boolValue: boolValue,
+              intValue: intValue,
+              floatValue: floatValue,
+              stringValue: stringValue,
+              colorValue: _colorValue?.build());
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'colorValue';
+        _colorValue?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            r'GGetDeviceData_deviceInfo_history_lastPoint',
+            _$failedField,
+            e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }
