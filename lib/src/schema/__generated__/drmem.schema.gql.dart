@@ -25,10 +25,12 @@ abstract class GSettingData
   String? get str;
   BuiltList<int>? get color;
   static Serializer<GSettingData> get serializer => _$gSettingDataSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GSettingData.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GSettingData? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GSettingData.serializer,
@@ -44,10 +46,12 @@ abstract class GDateRange implements Built<GDateRange, GDateRangeBuilder> {
   DateTime? get start;
   DateTime? get end;
   static Serializer<GDateRange> get serializer => _$gDateRangeSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GDateRange.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GDateRange? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GDateRange.serializer,

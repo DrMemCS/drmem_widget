@@ -32,6 +32,7 @@ abstract class GMonitorDeviceReq
       operationName: 'MonitorDevice',
     )
     ..executeOnListen = true;
+
   @override
   _i3.GMonitorDeviceVars get vars;
   @override
@@ -41,6 +42,7 @@ abstract class GMonitorDeviceReq
         operation: operation,
         variables: vars.toJson(),
       );
+
   @override
   String? get requestId;
   @override
@@ -62,12 +64,26 @@ abstract class GMonitorDeviceReq
   @override
   _i2.GMonitorDeviceData? parseData(Map<String, dynamic> json) =>
       _i2.GMonitorDeviceData.fromJson(json);
+
+  @override
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  @override
+  Map<String, dynamic> dataToJson(_i2.GMonitorDeviceData data) => data.toJson();
+
+  @override
+  _i1.OperationRequest<_i2.GMonitorDeviceData, _i3.GMonitorDeviceVars>
+      transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
+          this.rebuild((b) => b..operation = transform(operation));
+
   static Serializer<GMonitorDeviceReq> get serializer =>
       _$gMonitorDeviceReqSerializer;
+
   Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
         GMonitorDeviceReq.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GMonitorDeviceReq? fromJson(Map<String, dynamic> json) =>
       _i6.serializers.deserializeWith(
         GMonitorDeviceReq.serializer,

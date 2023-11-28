@@ -19,15 +19,18 @@ abstract class GAllDriversData
 
   static void _initializeBuilder(GAllDriversDataBuilder b) =>
       b..G__typename = 'Config';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   BuiltList<GAllDriversData_driverInfo> get driverInfo;
   static Serializer<GAllDriversData> get serializer =>
       _$gAllDriversDataSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GAllDriversData.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GAllDriversData? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GAllDriversData.serializer,
@@ -46,6 +49,7 @@ abstract class GAllDriversData_driverInfo
 
   static void _initializeBuilder(GAllDriversData_driverInfoBuilder b) =>
       b..G__typename = 'DriverInfo';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   String get name;
@@ -53,10 +57,12 @@ abstract class GAllDriversData_driverInfo
   String get description;
   static Serializer<GAllDriversData_driverInfo> get serializer =>
       _$gAllDriversDataDriverInfoSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GAllDriversData_driverInfo.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GAllDriversData_driverInfo? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GAllDriversData_driverInfo.serializer,

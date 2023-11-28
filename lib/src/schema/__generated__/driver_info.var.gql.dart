@@ -18,10 +18,12 @@ abstract class GAllDriversVars
 
   static Serializer<GAllDriversVars> get serializer =>
       _$gAllDriversVarsSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GAllDriversVars.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GAllDriversVars? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GAllDriversVars.serializer,

@@ -19,15 +19,18 @@ abstract class GGetDeviceData
 
   static void _initializeBuilder(GGetDeviceDataBuilder b) =>
       b..G__typename = 'Config';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   BuiltList<GGetDeviceData_deviceInfo> get deviceInfo;
   static Serializer<GGetDeviceData> get serializer =>
       _$gGetDeviceDataSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GGetDeviceData.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetDeviceData? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GGetDeviceData.serializer,
@@ -46,6 +49,7 @@ abstract class GGetDeviceData_deviceInfo
 
   static void _initializeBuilder(GGetDeviceData_deviceInfoBuilder b) =>
       b..G__typename = 'DeviceInfo';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   String get deviceName;
@@ -54,10 +58,12 @@ abstract class GGetDeviceData_deviceInfo
   GGetDeviceData_deviceInfo_history get history;
   static Serializer<GGetDeviceData_deviceInfo> get serializer =>
       _$gGetDeviceDataDeviceInfoSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GGetDeviceData_deviceInfo.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetDeviceData_deviceInfo? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GGetDeviceData_deviceInfo.serializer,
@@ -77,6 +83,7 @@ abstract class GGetDeviceData_deviceInfo_history
 
   static void _initializeBuilder(GGetDeviceData_deviceInfo_historyBuilder b) =>
       b..G__typename = 'DeviceHistory';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   int get totalPoints;
@@ -84,10 +91,12 @@ abstract class GGetDeviceData_deviceInfo_history
   GGetDeviceData_deviceInfo_history_lastPoint? get lastPoint;
   static Serializer<GGetDeviceData_deviceInfo_history> get serializer =>
       _$gGetDeviceDataDeviceInfoHistorySerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GGetDeviceData_deviceInfo_history.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetDeviceData_deviceInfo_history? fromJson(
           Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
@@ -109,6 +118,7 @@ abstract class GGetDeviceData_deviceInfo_history_firstPoint
   static void _initializeBuilder(
           GGetDeviceData_deviceInfo_history_firstPointBuilder b) =>
       b..G__typename = 'Reading';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   DateTime get stamp;
@@ -119,10 +129,12 @@ abstract class GGetDeviceData_deviceInfo_history_firstPoint
   BuiltList<int>? get colorValue;
   static Serializer<GGetDeviceData_deviceInfo_history_firstPoint>
       get serializer => _$gGetDeviceDataDeviceInfoHistoryFirstPointSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GGetDeviceData_deviceInfo_history_firstPoint.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetDeviceData_deviceInfo_history_firstPoint? fromJson(
           Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
@@ -144,6 +156,7 @@ abstract class GGetDeviceData_deviceInfo_history_lastPoint
   static void _initializeBuilder(
           GGetDeviceData_deviceInfo_history_lastPointBuilder b) =>
       b..G__typename = 'Reading';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   DateTime get stamp;
@@ -154,10 +167,12 @@ abstract class GGetDeviceData_deviceInfo_history_lastPoint
   BuiltList<int>? get colorValue;
   static Serializer<GGetDeviceData_deviceInfo_history_lastPoint>
       get serializer => _$gGetDeviceDataDeviceInfoHistoryLastPointSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GGetDeviceData_deviceInfo_history_lastPoint.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetDeviceData_deviceInfo_history_lastPoint? fromJson(
           Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(

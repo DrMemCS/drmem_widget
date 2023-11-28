@@ -32,6 +32,7 @@ abstract class GGetAllDevicesReq
       operationName: 'GetAllDevices',
     )
     ..executeOnListen = true;
+
   @override
   _i3.GGetAllDevicesVars get vars;
   @override
@@ -41,6 +42,7 @@ abstract class GGetAllDevicesReq
         operation: operation,
         variables: vars.toJson(),
       );
+
   @override
   String? get requestId;
   @override
@@ -62,12 +64,26 @@ abstract class GGetAllDevicesReq
   @override
   _i2.GGetAllDevicesData? parseData(Map<String, dynamic> json) =>
       _i2.GGetAllDevicesData.fromJson(json);
+
+  @override
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  @override
+  Map<String, dynamic> dataToJson(_i2.GGetAllDevicesData data) => data.toJson();
+
+  @override
+  _i1.OperationRequest<_i2.GGetAllDevicesData, _i3.GGetAllDevicesVars>
+      transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
+          this.rebuild((b) => b..operation = transform(operation));
+
   static Serializer<GGetAllDevicesReq> get serializer =>
       _$gGetAllDevicesReqSerializer;
+
   Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
         GGetAllDevicesReq.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetAllDevicesReq? fromJson(Map<String, dynamic> json) =>
       _i6.serializers.deserializeWith(
         GGetAllDevicesReq.serializer,

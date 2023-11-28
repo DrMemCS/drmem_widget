@@ -22,10 +22,12 @@ abstract class GMonitorDeviceVars
   _i1.GDateRange? get range;
   static Serializer<GMonitorDeviceVars> get serializer =>
       _$gMonitorDeviceVarsSerializer;
+
   Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
         GMonitorDeviceVars.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GMonitorDeviceVars? fromJson(Map<String, dynamic> json) =>
       _i2.serializers.deserializeWith(
         GMonitorDeviceVars.serializer,

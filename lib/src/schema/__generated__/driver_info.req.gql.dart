@@ -32,6 +32,7 @@ abstract class GAllDriversReq
       operationName: 'AllDrivers',
     )
     ..executeOnListen = true;
+
   @override
   _i3.GAllDriversVars get vars;
   @override
@@ -41,6 +42,7 @@ abstract class GAllDriversReq
         operation: operation,
         variables: vars.toJson(),
       );
+
   @override
   String? get requestId;
   @override
@@ -62,12 +64,26 @@ abstract class GAllDriversReq
   @override
   _i2.GAllDriversData? parseData(Map<String, dynamic> json) =>
       _i2.GAllDriversData.fromJson(json);
+
+  @override
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  @override
+  Map<String, dynamic> dataToJson(_i2.GAllDriversData data) => data.toJson();
+
+  @override
+  _i1.OperationRequest<_i2.GAllDriversData, _i3.GAllDriversVars>
+      transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
+          this.rebuild((b) => b..operation = transform(operation));
+
   static Serializer<GAllDriversReq> get serializer =>
       _$gAllDriversReqSerializer;
+
   Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
         GAllDriversReq.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GAllDriversReq? fromJson(Map<String, dynamic> json) =>
       _i6.serializers.deserializeWith(
         GAllDriversReq.serializer,

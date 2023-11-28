@@ -19,10 +19,12 @@ abstract class GGetDeviceVars
   String get name;
   static Serializer<GGetDeviceVars> get serializer =>
       _$gGetDeviceVarsSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GGetDeviceVars.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetDeviceVars? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GGetDeviceVars.serializer,
