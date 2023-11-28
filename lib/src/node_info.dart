@@ -4,8 +4,10 @@ library;
 import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 
-/// Holds information about DrMem nodes. This information is obtained via the
-/// mDNS announcements and by querying the node.
+/// Information associated with DrMem nodes.
+///
+/// This information is obtained via the mDNS announcements and by querying the
+/// node.
 
 class NodeInfo {
   /// The name of the node. This name is not the network name but is the name
@@ -33,11 +35,14 @@ class NodeInfo {
   final int port;
 
   /// This is a placeholder for future security. It will contain the digital
-  /// signature of the nodes SSL certificate.
+  /// signature of the node's SSL certificate. If this field is `null`, then
+  /// the DrMem node uses an unencrypted socket. If it is not `null`, a TLS
+  /// socket should be used (i.e. https).
   final String? signature;
 
-  /// Indicates when the node was started.
-  final DateTime bootTime;
+  /// Indicates when the node was started. If it's `null` then the entry was
+  /// programmatically entered and the actual boot time is unknown.
+  final DateTime? bootTime;
 
   /// Specifies the Graphql URL endpoint used for queries.
   final String queries;

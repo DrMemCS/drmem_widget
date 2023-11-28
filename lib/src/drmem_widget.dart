@@ -38,9 +38,12 @@ extension on DevValue {
       };
 }
 
+// Create a private extension that defines a method to convert the complex,
+// GraphQL history type into our Dart history type.
+
 extension on GGetDeviceData_deviceInfo_history {
-// Converts the GraphQL-generated reply type (representing the device's
-// historical summary) into a friendlier, Dart version.
+  // Converts the GraphQL-generated reply type (representing the device's
+  // historical summary) into a friendlier, Dart version.
 
   DeviceHistory? toDeviceHistory() {
     if (firstPoint != null && lastPoint != null) {
@@ -69,6 +72,9 @@ extension on GGetDeviceData_deviceInfo_history {
   }
 }
 
+// Create an extension which provides a conversion method only needed by this
+// module.
+
 extension on GSetDeviceData_setDevice {
   // Creates a [Reading] value from a GraphQL [setDevice] reply value.
 
@@ -76,8 +82,13 @@ extension on GSetDeviceData_setDevice {
       floatValue, stringValue, colorValue?.toList());
 }
 
+// Create an extension which provides a conversion method only needed by this
+// module.
+
 extension _Convert on Reading {
-  // Creates a [Reading] value from a set of values.
+  // Creates a [Reading] value from a set of values. This fucntion uses a
+  // `switch` statement with pattern matching to make sure the parameters
+  // specify a correctly formatted, single device value.
 
   static Reading fromParams(
           DateTime dt, bool? b, int? i, double? d, String? s, List<int>? c) =>
