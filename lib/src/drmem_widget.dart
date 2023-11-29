@@ -46,10 +46,10 @@ extension on GGetDeviceData_deviceInfo_history {
   // historical summary) into a friendlier, Dart version.
 
   DeviceHistory? toDeviceHistory() {
-    if (firstPoint != null && lastPoint != null) {
-      final oldest = firstPoint!;
-      final newest = lastPoint!;
+    final oldest = firstPoint;
+    final newest = lastPoint;
 
+    if (oldest != null && newest != null) {
       return DeviceHistory(
           totalPoints,
           _Convert.fromParams(
