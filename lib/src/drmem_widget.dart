@@ -2,7 +2,8 @@ library drmem_widget;
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import "package:gql_websocket_link/gql_websocket_link.dart";
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:gql_websocket_link/gql_websocket_link.dart';
 import 'package:gql_http_link/gql_http_link.dart';
 import 'package:ferry/ferry.dart';
 import 'package:built_collection/built_collection.dart';
@@ -131,13 +132,26 @@ class DrMem extends InheritedWidget {
 
   // Helper function to create the GraphQL query URI.
 
-  static String _buildQueryUri(String host, int port, String qEnd) =>
-      Uri(scheme: "http", host: host, port: port, path: qEnd).toString();
-
-  // Helper function to create the GraphQL subscription URI.
-
-  static String _buildSubUri(String host, int port, String sEnd) =>
-      Uri(scheme: "ws", host: host, port: port, path: sEnd).toString();
+  static (Uri, Uri) _buildUris(
+          {required String host,
+          required int port,
+          required String qEnd,
+          required String sEnd,
+          bool encrypted = false}) =>
+      (
+        Uri(
+          scheme: encrypted ? "https" : "http",
+          host: host,
+          port: port,
+          path: qEnd,
+        ),
+        Uri(
+          scheme: encrypted ? "wss" : "ws",
+          host: host,
+          port: port,
+          path: sEnd,
+        )
+      );
 
   // Validates a device value by adding a default node, if the node was null,
   // or verifying the node exists if it isn't null.
@@ -178,18 +192,20 @@ class DrMem extends InheritedWidget {
   ///
   /// [sEnd] is the URL path needed to get to the GraphQL subscription handler.
 
-  void addNode(String name, String host, int port, String qEnd, String sEnd) =>
-      _nodes[name] = (
-        Client(
-            link: HttpLink(_buildQueryUri(host, port, qEnd)), cache: Cache()),
-        Client(
-            link: WebSocketLink(_buildSubUri(host, port, sEnd),
-                reconnectInterval: const Duration(seconds: 1),
-                initialPayload: {
-                  "headers": {"sec-websocket-protocol": "graphql-ws"}
-                }),
-            cache: Cache())
-      );
+  void addNode(String name, String host, int port, String qEnd, String sEnd) {
+    final (qUri, sUri) =
+        _buildUris(host: host, port: port, qEnd: qEnd, sEnd: sEnd);
+
+    _nodes[name] = (
+      Client(link: HttpLink(qUri.toString()), cache: Cache()),
+      Client(
+          link: WebSocketLink(null,
+              channelGenerator: () =>
+                  WebSocketChannel.connect(sUri, protocols: ["graphql-ws"]),
+              reconnectInterval: const Duration(seconds: 1)),
+          cache: Cache())
+    );
+  }
 
   /// Removes a node from the table. The application should make sure that it
   /// has closed all subscriptions to the node because it will receive errors
