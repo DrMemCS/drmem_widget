@@ -24,7 +24,7 @@ import 'device_info.dart';
 
 extension on DevValue {
   // Adds a method to the DevValue classes which can convert a value into a
-  // builder of [GSettingData]. This is used when a client want to make a
+  // builder of [GSettingData]. This is used when a client wants to make a
   // setting. Rather than create a different type (which GraphQL requires),
   // this allows an app to use the [DevValue] hierarchy for inputs and outputs.
 
