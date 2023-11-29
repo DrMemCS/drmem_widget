@@ -101,6 +101,8 @@ extension _Convert on Reading {
             (null, null, null, _, null) when s != null => DevStr(value: s),
             (null, null, null, null, [int r, int g, int b]) =>
               DevColor(red: r, green: g, blue: b),
+            (null, null, null, null, _) when c != null =>
+              throw (Exception("wrong number of color components")),
             (null, null, null, null, null) =>
               throw (Exception("reading has no data")),
             _ => throw (Exception("reading has multiple value types"))
