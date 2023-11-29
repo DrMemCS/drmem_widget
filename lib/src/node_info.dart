@@ -2,7 +2,8 @@
 library;
 
 import 'dart:developer' as developer;
-import 'package:flutter/foundation.dart';
+
+typedef HostInfo = (String, int);
 
 /// Information associated with DrMem nodes.
 ///
@@ -17,55 +18,56 @@ class NodeInfo {
   /// A string in the format "major.minor.patch" format indicating the version
   /// of the DrMem node. The app can use this to determine what features are
   /// supported by the node.
-  final String version;
+  String version;
 
   /// This is the location of the node, as reported in the DrMem configuration
   /// file.
-  final String location;
+  String location;
 
-  /// A list of IP adresses / host names with which to use to connect. The mDNS
-  /// announcement itself provides the location IP address. This address will
-  /// always be the last entry in the list. The node is allowed to advertise
-  /// a preferred address (in case the node is available from the general
-  /// Internet.) If the node has a preferred address, it's prepended to the
-  /// list. An application can try each of the addresses to connect to the node.
-  final List<String> host;
-
-  /// The port number used by the node.
-  final int port;
+  /// An IP adress / host name along with a port number with which to use to
+  /// connect.
+  HostInfo addr;
 
   /// This is a placeholder for future security. It will contain the digital
   /// signature of the node's SSL certificate. If this field is `null`, then
   /// the DrMem node uses an unencrypted socket. If it is not `null`, a TLS
   /// socket should be used (i.e. https).
-  final String? signature;
+  String? signature;
 
   /// Indicates when the node was started. If it's `null` then the entry was
   /// programmatically entered and the actual boot time is unknown.
-  final DateTime? bootTime;
+  DateTime? bootTime;
 
   /// Specifies the Graphql URL endpoint used for queries.
-  final String queries;
+  String queries;
 
   /// Specifies the Graphql URL endpoint used for mutations.
-  final String mutations;
+  String mutations;
 
   /// Specifies the Graphql URL endpoint used for subscription.
-  final String subscriptions;
+  String subscriptions;
 
   /// [NodeInfo] constructor.
 
-  const NodeInfo(
+  NodeInfo(
       {required this.name,
       required this.version,
       required this.location,
-      required this.host,
-      required this.port,
+      required this.addr,
       this.signature,
-      required this.bootTime,
-      required this.queries,
-      required this.mutations,
-      required this.subscriptions});
+      this.bootTime,
+      this.queries = "/drmem/q",
+      this.mutations = "/drmem/q",
+      this.subscriptions = "/drmem/s"});
+
+  /// Indicates whether the node is currently announcing itself on the local
+  /// network.
+
+  bool get announcing => bootTime != null;
+
+  /// Marks the node as not announcing itself.
+
+  void deactivate() => bootTime = null;
 
   /// Converts a [NodeInfo] object into a map which can be used to generate
   /// JSON values.
@@ -75,13 +77,19 @@ class NodeInfo {
       'name': name,
       'version': version,
       'location': location,
-      'host': host,
-      'port': port,
-      'bootTime': bootTime,
+      'addr': {'host': addr.$1, 'port': addr.$2},
       'queries': queries,
       'mutations': mutations,
       'subscriptions': subscriptions
     };
+
+    // If a boot time is specified, save it.
+
+    if (bootTime != null) {
+      v['bootTime'] = bootTime!.toIso8601String();
+    }
+
+    // If a signature is specified, save it.
 
     if (signature != null) {
       v['signature'] = signature!;
@@ -100,24 +108,22 @@ class NodeInfo {
           'name': String name,
           'version': String version,
           'location': String location,
-          'host': List<String> host,
-          'port': int port,
-          'bootTime': DateTime bootTime,
+          'addr': {'host': String host, 'port': int port},
           'queries': String queries,
           'mutations': String mutations,
           'subscriptions': String subscriptions
         }) {
       final sig = json['signature'];
+      final bt = json['bootTime'];
 
-      if (sig == null || sig is String) {
+      if ((sig == null || sig is String) && (bt == null || bt is String)) {
         return NodeInfo(
             name: name,
             version: version,
             location: location,
-            host: host,
-            port: port,
+            addr: (host, port),
             signature: sig,
-            bootTime: bootTime,
+            bootTime: bt != null ? DateTime.parse(bt) : bt,
             queries: queries,
             mutations: mutations,
             subscriptions: subscriptions);
@@ -148,8 +154,7 @@ class NodeInfo {
       name == other.name &&
       version == other.version &&
       location == other.location &&
-      listEquals(host, other.host) &&
-      port == other.port &&
+      addr == other.addr &&
       signature == other.signature &&
       bootTime == other.bootTime &&
       queries == other.queries &&
@@ -161,5 +166,5 @@ class NodeInfo {
 
   @override
   String toString() =>
-      "{name: $name, version: $version, location: $location, host: $host, port: $port, bootTime: $bootTime, queries: $queries, mutations: $mutations, subscriptions: $subscriptions, signature: $signature }";
+      "{name: $name, version: $version, location: $location, addr: $addr, bootTime: $bootTime, queries: $queries, mutations: $mutations, subscriptions: $subscriptions, signature: $signature }";
 }

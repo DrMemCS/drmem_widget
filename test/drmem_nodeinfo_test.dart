@@ -9,8 +9,7 @@ void main() {
         name: 'Name',
         version: '1.0',
         location: 'n/a',
-        host: ['example'],
-        port: 1000,
+        addr: ('example', 1000),
         bootTime: boot,
         queries: 'q',
         mutations: 'm',
@@ -22,9 +21,8 @@ void main() {
       'name': 'Name',
       'version': '1.0',
       'location': 'n/a',
-      'host': ['example'],
-      'port': 1000,
-      'bootTime': boot,
+      'addr': {'host': 'example', 'port': 1000},
+      'bootTime': boot.toIso8601String(),
       'queries': 'q',
       'mutations': 'm',
       'subscriptions': 's'
@@ -36,7 +34,7 @@ void main() {
 
     // Can we decode it back to the original?
 
-    expect(NodeInfo.fromJson(json), equals(ni));
+    expect(NodeInfo.fromJson(json), allOf(isNotNull, equals(ni)));
 
     // Now make sure we can't decode it if it's missing a field or a field is
     // of the incorrect type.
@@ -48,7 +46,7 @@ void main() {
     tmp['name'] = 1;
     expect(NodeInfo.fromJson(tmp), isNull);
     tmp['name'] = 'Name';
-    expect(NodeInfo.fromJson(tmp), equals(ni));
+    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, equals(ni)));
 
     tmp.remove('version');
     expect(NodeInfo.fromJson(tmp), isNull);
@@ -57,7 +55,7 @@ void main() {
     tmp['version'] = 1;
     expect(NodeInfo.fromJson(tmp), isNull);
     tmp['version'] = '1.0';
-    expect(NodeInfo.fromJson(tmp), equals(ni));
+    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, equals(ni)));
 
     tmp.remove('location');
     expect(NodeInfo.fromJson(tmp), isNull);
@@ -66,38 +64,27 @@ void main() {
     tmp['location'] = 1;
     expect(NodeInfo.fromJson(tmp), isNull);
     tmp['location'] = 'n/a';
-    expect(NodeInfo.fromJson(tmp), equals(ni));
+    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, equals(ni)));
 
-    tmp.remove('host');
+    tmp.remove('addr');
     expect(NodeInfo.fromJson(tmp), isNull);
-    tmp['host'] = 1;
+    tmp['addr'] = 1;
     expect(NodeInfo.fromJson(tmp), isNull);
-    tmp['host'] = <String>[];
-    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, isNot(equals(ni))));
-    tmp['host'] = ['another'];
-    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, isNot(equals(ni))));
-    tmp['host'] = ['example', 'another'];
-    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, isNot(equals(ni))));
-    tmp['host'] = ['another', 'example'];
-    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, isNot(equals(ni))));
-    tmp['host'] = ['example'];
-    expect(NodeInfo.fromJson(tmp), equals(ni));
-
-    tmp.remove('port');
+    tmp['addr'] = <HostInfo>[];
     expect(NodeInfo.fromJson(tmp), isNull);
-    tmp['port'] = 100;
+    tmp['addr'] = {'host': 'another', 'port': 1000};
     expect(NodeInfo.fromJson(tmp), allOf(isNotNull, isNot(equals(ni))));
-    tmp['port'] = 'hello';
-    expect(NodeInfo.fromJson(tmp), isNull);
-    tmp['port'] = 1000;
-    expect(NodeInfo.fromJson(tmp), equals(ni));
+    tmp['addr'] = {'host': 'example', 'port': 2000};
+    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, isNot(equals(ni))));
+    tmp['addr'] = {'host': 'example', 'port': 1000};
+    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, equals(ni)));
 
     tmp['signature'] = 'hello';
     expect(NodeInfo.fromJson(tmp), allOf(isNotNull, isNot(equals(ni))));
     tmp['signature'] = 1;
     expect(NodeInfo.fromJson(tmp), isNull);
     tmp.remove('signature');
-    expect(NodeInfo.fromJson(tmp), equals(ni));
+    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, equals(ni)));
 
     tmp.remove('queries');
     expect(NodeInfo.fromJson(tmp), isNull);
@@ -106,7 +93,7 @@ void main() {
     tmp['queries'] = 1;
     expect(NodeInfo.fromJson(tmp), isNull);
     tmp['queries'] = 'q';
-    expect(NodeInfo.fromJson(tmp), equals(ni));
+    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, equals(ni)));
 
     tmp.remove('mutations');
     expect(NodeInfo.fromJson(tmp), isNull);
@@ -115,7 +102,7 @@ void main() {
     tmp['mutations'] = 1;
     expect(NodeInfo.fromJson(tmp), isNull);
     tmp['mutations'] = 'm';
-    expect(NodeInfo.fromJson(tmp), equals(ni));
+    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, equals(ni)));
 
     tmp.remove('subscriptions');
     expect(NodeInfo.fromJson(tmp), isNull);
@@ -124,6 +111,6 @@ void main() {
     tmp['subscriptions'] = 1;
     expect(NodeInfo.fromJson(tmp), isNull);
     tmp['subscriptions'] = 's';
-    expect(NodeInfo.fromJson(tmp), equals(ni));
+    expect(NodeInfo.fromJson(tmp), allOf(isNotNull, equals(ni)));
   });
 }
