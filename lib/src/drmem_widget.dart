@@ -157,23 +157,16 @@ class DrMem extends InheritedWidget {
   // or verifying the node exists if it isn't null.
 
   Device _resolve(Device dev) {
-    switch (dev) {
-      case Device(node: null):
-        {
-          if (_nodes.length == 1) {
-            return Device(node: _nodes.keys.first, name: dev.name);
-          } else {
-            throw Exception("device needs a node specified");
-          }
-        }
-      case Device(node: var node):
-        {
-          if (_nodes.containsKey(node)) {
-            return dev;
-          } else {
-            throw Exception("device on unknown node, '$node'");
-          }
-        }
+    if (dev case Device(node: String node)) {
+      if (_nodes.containsKey(node)) {
+        return dev;
+      } else {
+        throw Exception("device on unknown node, '$node'");
+      }
+    } else if (_nodes.length == 1) {
+      return Device(node: _nodes.keys.first, name: dev.name);
+    } else {
+      throw Exception("device needs a node specified");
     }
   }
 
