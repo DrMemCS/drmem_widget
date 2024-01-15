@@ -1,6 +1,15 @@
+/// Provides a widget to interact with a DrMem node through the client API.
+///
+/// Near the top of your widget tree, you place an instance of [DrMem]. This
+/// widget should be rebuilt as infrequently as possible. It contains a table
+/// of known nodes and it maintains connections to them. If this widget gets
+/// rebuilt, all of that state needs to be reproduced and will cause jank and
+/// extra work on the DrMem node.
+
 library drmem_widget;
 
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:gql_websocket_link/gql_websocket_link.dart';
@@ -19,9 +28,13 @@ import 'schema/__generated__/monitor_device.req.gql.dart';
 import 'device_value.dart';
 import 'device_like.dart';
 import 'device_history.dart';
+import 'node_info.dart';
 import 'reading.dart';
 import 'driver_info.dart';
 import 'device_info.dart';
+
+typedef _NodeValue = (NodeInfo, Client, Client);
+typedef _NodeMap = Map<String, _NodeValue>;
 
 extension on DevValue {
   // Adds a method to the DevValue classes which can convert a value into a
@@ -115,40 +128,197 @@ extension _Convert on Reading {
 DriverInfo _driverInfoFrom(GAllDriversData_driverInfo o) =>
     DriverInfo(o.name, o.summary, o.description);
 
-/// The [DrMem] widget implements a "provider" widget for an application's
-/// tree. It manages GraphQL connections to registered DrMem nodes. It should be
-/// located near the top of the tree so it remains stable during the life of
-/// the application.
+// This widget implements an inherited model. Each time it's built, it gets a
+// snapshot of the known nodes. Widgets that register with it will get rebuilt
+// when the associated value changes.
 
-class DrMem extends InheritedWidget {
+class _DrMemModel extends InheritedModel<String> {
+  final _NodeMap nodes;
+
+  const _DrMemModel(this.nodes, {required super.child});
+
+  @override
+  bool updateShouldNotify(_DrMemModel oldWidget) =>
+      !mapEquals(nodes, oldWidget.nodes);
+
+  @override
+  bool updateShouldNotifyDependent(_DrMemModel oldWidget, Set<String> deps) =>
+      deps.any((e) => nodes[e] != oldWidget.nodes[e]);
+}
+
+/// The [DrMem] widget implements a "provider" widget for an application's
+/// tree. Its state manages GraphQL connections to registered DrMem nodes. It
+/// should be located near the top of the tree so it remains stable during the
+/// life of the application.
+
+class DrMem extends StatefulWidget {
+  final Widget child;
+
+  const DrMem({required this.child, super.key});
+
+  @override
+  State<DrMem> createState() => _DrMemState();
+
+  /// Returns the instance of this class higher up in the widget tree.
+
+  static _DrMemState _of(BuildContext context) =>
+      context.findAncestorStateOfType<_DrMemState>()!;
+
+  /// Adds a new node to the table of known DrMem nodes. When this completes,
+  /// the application can interact with the node using the rest of the API.
+  ///
+  /// [context] is the context of the widget making the request.
+  ///
+  /// [name] is the name of the node. All DrMem nodes should have unique names.
+  ///
+  /// [host] is the IP address of the host.
+  ///
+  /// [port] is the port number to use.
+  ///
+  /// [qEnd] is the URL path needed to get to the GraphQL query/mutation
+  /// handler.
+  ///
+  /// [sEnd] is the URL path needed to get to the GraphQL subscription handler.
+
+  static void addNode(BuildContext context, NodeInfo info) =>
+      _of(context).addNode(info);
+
+  /// Removes a node from the table.
+  ///
+  /// [context] is the context of the widget making the request.
+  ///
+  /// [name] is the name of the node. All DrMem nodes should have unique names.
+
+  static void removeNode(BuildContext context, String name) =>
+      _of(context).removeNode(name);
+
+  /// Sets a value of a DrMem device.
+  ///
+  /// The target device must be settable.
+  ///
+  /// [context] is the context of the widget making the request.
+  ///
+  /// [device] is the name fo the device.
+  ///
+  /// [value] is the value to set. Most devices enforce a value type. For
+  /// instance, "enable" devices are typically boolean. If the incorrect type
+  /// is sent, the driver will return an error. See the driver documentation
+  /// to see what data type is supported by the device.
+  ///
+  /// The function returns a [Reading] structure echoing the setting and
+  /// containing the timestamp of when the setting was applied. Some drivers
+  /// will return an error when a setting value is out of range. Other drivers
+  /// may accept the value, but clip it to remain in range. See the driver docs
+  /// to understand the behavior.
+
+  static Future<Reading> setDevice(
+          BuildContext context, Device device, DevValue value) =>
+      _of(context).setDevice(device, value);
+
+  /// Retrieves driver information from a DrMem node.
+  ///
+  /// Each instance of DrMem interacts with it own set of hardware devices and,
+  /// therefore, is built with a custom set of drviers. This function queries
+  /// the node for available information on its set of drivers.
+  ///
+  /// [context] is the context of the widget making the request.
+  ///
+  /// [node] is the name of the DrMem node used when registering it with
+  /// [addNode].
+
+  static Future<List<DriverInfo>> getDriverInfo(
+          BuildContext context, String node) =>
+      _of(context).getDriverInfo(node);
+
+  /// Returns information about a device.
+  ///
+  /// [context] is the context of the widget making the request.
+  ///
+  /// [node] indicates which DrMem node should be queried.
+  ///
+  /// [device] specifies which device's information should be returned. If a
+  /// unique, existing device name is given, a one-element `List` will be
+  /// returned. If the device parameter specifies a pattern, all matching
+  /// devices will have their information returned.
+  ///
+  /// Returns a Future that resolves to a `List` of device information
+  /// ([DevInfo]), or an error.
+
+  static Future<List<DeviceInfo>> getDeviceInfo(BuildContext context,
+          {required DevicePattern device}) =>
+      _of(context).getDeviceInfo(device: device);
+
+  /// Returns a stream of readings for a device.
+  ///
+  /// This method provides many flexible ways to obtain device readings. Some
+  /// of these options may be limited, if the DrMem node is using the simple
+  /// backend (which only saves one point of history.)
+  ///
+  /// [context] is the context of the widget making the request.
+  ///
+  /// [device] is the device whose readings should be streamed.
+  ///
+  /// [startTime] and [endTime] are optional arguments which create a range
+  /// of time in which readings should be returned. If both are `null`, the
+  /// latest and all future readings are returned until the stream is closed.
+  /// If `startTime` is null, the latest reading is returned and all future
+  /// readings until `endTime` is reached. If `endTime` is null, then all
+  /// readings from `startTime` until the current time are returned followed
+  /// by all future readings until the stream is closed. If both times are
+  /// before the current time, just the data between the two times is returned.
+  /// If both times are after the current time, then readings won't begin until
+  /// `startTime` is reached.
+  ///
+  /// DrMem's configuration determines the size of a device's history. This
+  /// function can only return what's available.
+
+  static Stream<Reading> monitorDevice(BuildContext context, Device device,
+          {DateTime? startTime, DateTime? endTime}) =>
+      _of(context)
+          .monitorDevice(device, startTime: startTime, endTime: endTime);
+}
+
+class _DrMemState extends State<DrMem> {
   // This map holds the GraphQL endpoints for known, DrMem nodes. If the
   // endpoints are `null`, we haven't yet made contact with it.
 
-  final Map<String, (Client, Client)> _nodes = {};
+  late _NodeMap _nodes;
 
-  /// Creates the widget and associates it with a widget subtree.
+  @override
+  void initState() {
+    _nodes = {};
+    super.initState();
+  }
 
-  DrMem({required super.child, super.key});
+  @override
+  void dispose() {
+    // Close the connections to DrMem.
+
+    for (final MapEntry(value: (_, a, b)) in _nodes.entries) {
+      a.dispose();
+      b.dispose();
+    }
+    super.dispose();
+  }
 
   // Helper function to create the GraphQL query URI.
 
   static (Uri, Uri) _buildUris(
-          {required String host,
-          required int port,
+          {required (String, int) host,
           required String qEnd,
           required String sEnd,
           bool encrypted = false}) =>
       (
         Uri(
           scheme: encrypted ? "https" : "http",
-          host: host,
-          port: port,
+          host: host.$1,
+          port: host.$2,
           path: qEnd,
         ),
         Uri(
           scheme: encrypted ? "wss" : "ws",
-          host: host,
-          port: port,
+          host: host.$1,
+          port: host.$2,
           path: sEnd,
         )
       );
@@ -170,54 +340,25 @@ class DrMem extends InheritedWidget {
     }
   }
 
-  /// Adds a new node to the table of known DrMem nodes. When this completes,
-  /// the application can interact with the node using the rest of the API.
-  ///
-  /// [name] is the name of the node. On a given subnet, all DrMem node should
-  /// have unique names.
-  ///
-  /// [host] is the IP address of the host.
-  ///
-  /// [port] is the port number to use.
-  ///
-  /// [qEnd] is the URL path needed to get to the GraphQL query/mutation
-  /// handler.
-  ///
-  /// [sEnd] is the URL path needed to get to the GraphQL subscription handler.
+  // The implementation of [DrMem.addNode].
 
-  void addNode(String name, String host, int port, String qEnd, String sEnd) {
-    final (qUri, sUri) =
-        _buildUris(host: host, port: port, qEnd: qEnd, sEnd: sEnd);
+  void addNode(NodeInfo info) {
+    final (qUri, sUri) = _buildUris(
+        host: info.addr, qEnd: info.queries, sEnd: info.subscriptions);
+    final qClient = Client(link: HttpLink(qUri.toString()), cache: Cache());
+    final sClient = Client(
+        link: WebSocketLink(null,
+            channelGenerator: () =>
+                WebSocketChannel.connect(sUri, protocols: ["graphql-ws"]),
+            reconnectInterval: const Duration(seconds: 1)),
+        cache: Cache());
 
-    _nodes[name] = (
-      Client(link: HttpLink(qUri.toString()), cache: Cache()),
-      Client(
-          link: WebSocketLink(null,
-              channelGenerator: () =>
-                  WebSocketChannel.connect(sUri, protocols: ["graphql-ws"]),
-              reconnectInterval: const Duration(seconds: 1)),
-          cache: Cache())
-    );
+    setState(() => _nodes[info.name] = (info, qClient, sClient));
   }
 
-  /// Removes a node from the table. The application should make sure that it
-  /// has closed all subscriptions to the node because it will receive errors
-  /// on any in-flight transactions.
+  // The implementation of [DrMem.removeNode].
 
-  void removeNode(String name) {
-    _nodes.remove(name);
-  }
-
-  /// Returns the instance of this class higher up in the widget tree.
-
-  static DrMem of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<DrMem>()!;
-
-  // This class only has connections to the nodes so it never has to notify
-  // any observers about updates.
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
+  void removeNode(String name) => setState(() => _nodes.remove(name));
 
   // Translates the response of a [getDeviceInfo] query into a `List<DevInfo>`.
 
@@ -236,7 +377,7 @@ class DrMem extends InheritedWidget {
     final entry = _nodes[node];
 
     if (entry != null) {
-      return entry;
+      return (entry.$2, entry.$3);
     } else {
       throw Exception('node `$node` is not known');
     }
@@ -271,22 +412,7 @@ class DrMem extends InheritedWidget {
     });
   }
 
-  /// Sets a value of a DrMem device.
-  ///
-  /// The target device must be settable.
-  ///
-  /// [device] is the name fo the device.
-  ///
-  /// [value] is the value to set. Most devices enforce a value type. For
-  /// instance, "enable" devices are typically boolean. If the incorrect type
-  /// is sent, the driver will return an error. See the driver documentation
-  /// to see what data type is supported by the device.
-  ///
-  /// The function returns a [Reading] structure echoing the setting and
-  /// containing the timestamp of when the setting was applied. Some drivers
-  /// will return an error when a setting value is out of range. Other drivers
-  /// may accept the value, but clip it to remain in range. See the driver docs
-  /// to understand the behavior.
+  // The implmentation of [DrMem.setDevice].
 
   Future<Reading> setDevice(Device device, DevValue value) => _rpc(
       _resolve(device).node!,
@@ -295,14 +421,7 @@ class DrMem extends InheritedWidget {
         ..vars.value = value.toSettingData()),
       (result) => result.setDevice.toReading());
 
-  /// Retrieves driver information from a DrMem node.
-  ///
-  /// Each instance of DrMem interacts with it own set of hardware devices and,
-  /// therefore, is built with a custom set of drviers. This function queries
-  /// the node for available information on its set of drivers.
-  ///
-  /// [node] is the name of the DrMem node used when registering it with
-  /// [addNode].
+  // The implementation of [DrMem.getDriverInfo].
 
   Future<List<DriverInfo>> getDriverInfo(String node) => _rpc(
         node,
@@ -310,17 +429,7 @@ class DrMem extends InheritedWidget {
         (result) => result.driverInfo.map(_driverInfoFrom).toList(),
       );
 
-  /// Returns information about a device.
-  ///
-  /// [node] indicates which DrMem node should be queried.
-  ///
-  /// [device] specifies which device's information should be returned. If a
-  /// unique, existing device name is given, a one-element `List` will be
-  /// returned. If the device parameter specifies a pattern, all matching
-  /// devices will have their information returned.
-  ///
-  /// Returns a Future that resolves to a `List` of device information
-  /// ([DevInfo]), or an error.
+  // This is the implementation of [DrMem.getDeviceInfo].
 
   Future<List<DeviceInfo>> getDeviceInfo({required DevicePattern device}) =>
       _rpc(device.node, GGetDeviceReq((b) => b..vars.name = device.name),
@@ -341,27 +450,8 @@ class DrMem extends InheritedWidget {
     }
   }
 
-  /// Returns a stream of readings for a device.
-  ///
-  /// This method provides many flexible ways to obtain device readings. Some
-  /// of these options may be limited, if the DrMem node is using the simple
-  /// backend (which only saves one point of history.)
-  ///
-  /// [device] is the device whose readings should be streamed.
-  ///
-  /// [startTime] and [endTime] are optional arguments which create a range
-  /// of time in which readings should be returned. If both are `null`, the
-  /// latest and all future readings are returned until the stream is closed.
-  /// If `startTime` is null, the latest reading is returned and all future
-  /// readings until `endTime` is reached. If `endTime` is null, then all
-  /// readings from `startTime` until the current time are returned followed
-  /// by all future readings until the stream is closed. If both times are
-  /// before the current time, just the data between the two times is returned.
-  /// If both times are after the current time, then readings won't begin until
-  /// `startTime` if reached.
-  ///
-  /// DrMem's configuration determines the size of a device's history. This
-  /// function can only return what's available.
+  // The implementation of [DrMem.monitorDevice].
+
   Stream<Reading> monitorDevice(Device device,
       {DateTime? startTime, DateTime? endTime}) {
     final dev = _resolve(device);
@@ -381,4 +471,8 @@ class DrMem extends InheritedWidget {
             data.stringValue,
             data.colorValue?.toList()));
   }
+
+  @override
+  Widget build(BuildContext context) =>
+      _DrMemModel({..._nodes}, child: widget.child);
 }
