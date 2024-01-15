@@ -28,8 +28,8 @@ class _DrMemNodeModel extends InheritedModel<String> {
 
   @override
   bool updateShouldNotifyDependent(
-          _DrMemNodeModel oldWidget, Set<String> dependencies) =>
-      dependencies.any((ii) => nodes[ii] != oldWidget.nodes[ii]);
+          _DrMemNodeModel oldWidget, Set<String> deps) =>
+      deps.any((ii) => nodes[ii] != oldWidget.nodes[ii]);
 
   // Allows a client to handle the case where this model may not be in the
   // widget tree.
