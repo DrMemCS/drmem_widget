@@ -16,7 +16,18 @@ sealed class DeviceLike {
 class Device extends DeviceLike {
   final String? node;
 
-  const Device({this.node, required super.name});
+  static String _validateName(String name) {
+    final regexp = RegExp(r'^\w([-\w]*\w)?(:\w([-\w]*\w)?)*$',
+        multiLine: false, unicode: true, caseSensitive: false);
+
+    if (regexp.hasMatch(name)) {
+      return name;
+    } else {
+      throw ArgumentError("invalid device name", "name");
+    }
+  }
+
+  Device({this.node, required String name}) : super(name: _validateName(name));
 }
 
 /// Defines a device "pattern" device. In this type, the name field can be
