@@ -10,7 +10,7 @@ class Reading {
   /// up to the driver to keep this promise.
   final DateTime stamp;
 
-  /// The value of the device.
+  /// The value returned from the device.
   late final DevValue value;
 
   Reading(this.stamp, this.value);
