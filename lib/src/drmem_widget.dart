@@ -66,14 +66,14 @@ extension on GGetDeviceData_deviceInfo_history {
     if (oldest != null && newest != null) {
       return DeviceHistory(
           totalPoints,
-          _Convert.fromParams(
+          fromParams(
               oldest.stamp,
               oldest.boolValue,
               oldest.intValue,
               oldest.floatValue,
               oldest.stringValue,
               oldest.colorValue?.toList()),
-          _Convert.fromParams(
+          fromParams(
               newest.stamp,
               newest.boolValue,
               newest.intValue,
@@ -92,36 +92,31 @@ extension on GGetDeviceData_deviceInfo_history {
 extension on GSetDeviceData_setDevice {
   // Creates a [Reading] value from a GraphQL [setDevice] reply value.
 
-  Reading toReading() => _Convert.fromParams(stamp, boolValue, intValue,
-      floatValue, stringValue, colorValue?.toList());
+  Reading toReading() => fromParams(stamp, boolValue, intValue, floatValue,
+      stringValue, colorValue?.toList());
 }
 
-// Create an extension which provides a conversion method only needed by this
-// module.
+// Creates a [Reading] value from a set of values. This fucntion uses a
+// `switch` statement with pattern matching to make sure the parameters
+// specify a correctly formatted, single device value.
 
-extension _Convert on Reading {
-  // Creates a [Reading] value from a set of values. This fucntion uses a
-  // `switch` statement with pattern matching to make sure the parameters
-  // specify a correctly formatted, single device value.
-
-  static Reading fromParams(
-          DateTime dt, bool? b, int? i, double? d, String? s, List<int>? c) =>
-      Reading(
-          dt,
-          switch ((b, i, d, s, c)) {
-            (_, null, null, null, null) when b != null => DevBool(value: b),
-            (null, _, null, null, null) when i != null => DevInt(value: i),
-            (null, null, _, null, null) when d != null => DevFlt(value: d),
-            (null, null, null, _, null) when s != null => DevStr(value: s),
-            (null, null, null, null, [int r, int g, int b]) =>
-              DevColor(red: r, green: g, blue: b),
-            (null, null, null, null, _) when c != null =>
-              throw (Exception("wrong number of color components")),
-            (null, null, null, null, null) =>
-              throw (Exception("reading has no data")),
-            _ => throw (Exception("reading has multiple value types"))
-          });
-}
+Reading fromParams(
+        DateTime dt, bool? b, int? i, double? d, String? s, List<int>? c) =>
+    Reading(
+        dt,
+        switch ((b, i, d, s, c)) {
+          (_, null, null, null, null) when b != null => DevBool(value: b),
+          (null, _, null, null, null) when i != null => DevInt(value: i),
+          (null, null, _, null, null) when d != null => DevFlt(value: d),
+          (null, null, null, _, null) when s != null => DevStr(value: s),
+          (null, null, null, null, [int r, int g, int b]) =>
+            DevColor(red: r, green: g, blue: b),
+          (null, null, null, null, _) when c != null =>
+            throw (Exception("wrong number of color components")),
+          (null, null, null, null, null) =>
+            throw (Exception("reading has no data")),
+          _ => throw (Exception("reading has multiple value types"))
+        });
 
 // Creates a [DriverInfo] object from a GraphQL [driverInfo] reply value.
 
