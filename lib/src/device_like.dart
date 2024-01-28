@@ -1,7 +1,6 @@
-/// Base class for Device-like types. All device-like types have a "name" field.
-
 library;
 
+/// Base class for Device-like types. All device-like types have a "name" field.
 sealed class DeviceLike {
   final String name;
 
