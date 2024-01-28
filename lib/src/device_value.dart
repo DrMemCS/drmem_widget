@@ -1,9 +1,10 @@
-/// This module defines a type which models all the types supported by DrMem
-/// devices. These classes are bound together by the sealed, base class so they
-/// define the complete set of allowed types. They don't provide much more API
-/// than this because they're mostly used to transfer data to and from DrMem.
-/// If any value needs to be used in calculations, that should be done before
-/// encoding it into one of these types.
+/// Defines types which model all data types supported by DrMem devices.
+///
+/// These classes are bound together by the sealed, base class [DevValue] so
+/// they define the complete set of allowed types. They don't provide much
+/// more API than this because they're mostly used to transfer data to and
+/// from DrMem. If any value needs to be used in calculations, that should
+/// be done before encapsulating it into one of these types.
 library;
 
 import "dart:math";
@@ -42,6 +43,7 @@ class DevStr extends DevValue {
   const DevStr({required this.value});
 }
 
+/// Holds RGB color values.
 class DevColor extends DevValue {
   final int red;
   final int green;
