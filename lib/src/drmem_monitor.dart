@@ -47,7 +47,7 @@ class _DrMemNodeModel extends InheritedModel<String> {
   }
 }
 
-// Takes astring in "host:port" format and returns a HostInfo type. If it
+// Takes a string in "host:port" format and returns a HostInfo type. If it
 // can't be parsed, `null` is returned.
 
 HostInfo? _parseHostInfo(String? s) {
@@ -130,15 +130,18 @@ class DrMemNodes extends StatefulWidget {
 
 class _DrMemNodesState extends State<DrMemNodes> {
   final Map<String, NodeInfo> _nodes = {};
-  late final Future<Discovery> _fut;
-  Discovery? disc;
+  Discovery? _disc;
 
   // When creating the state, start up the mDNS service.
 
   @override
   void initState() {
-    _fut = startDiscovery('_drmem._tcp');
-    dev.log("starting mDNS", name: "mdns.announce");
+    dev.log("starting mDNS monitor", name: "mdns.announce");
+    startDiscovery('_drmem._tcp').then((value) {
+      value.addServiceListener(_serviceUpdate);
+      dev.log("registered with mDNS", name: "mdns.announce");
+      setState(() => _disc = value);
+    });
     super.initState();
   }
 
@@ -147,7 +150,7 @@ class _DrMemNodesState extends State<DrMemNodes> {
 
   @override
   void dispose() {
-    final tmp = disc;
+    final tmp = _disc;
 
     // Shut down the background thread asynchronously.
 
@@ -185,14 +188,15 @@ class _DrMemNodesState extends State<DrMemNodes> {
       // announcement.
 
       if (ni != null) {
-        dev.log("add node ${ni.name}", name: "mDNS");
+        // If the node isn't in the map or it is and we can merge the data
+        // with what's in the map, then update the entry.
 
         if (_nodes[ni.name]?.canUpdate(ni) ?? true) {
-          _nodes[ni.name] = ni;
-
-          // Mark that the widget needs to be rebuilt.
-
-          setState(() {});
+          setState(() => _nodes[ni.name] = ni);
+          dev.log("added node ${ni.name}", name: "mDNS");
+        } else {
+          dev.log("node ${ni.name} announced but can't be merged ... ignoring",
+              name: "mDNS");
         }
       } else {
         dev.log(
@@ -205,27 +209,16 @@ class _DrMemNodesState extends State<DrMemNodes> {
     // list but won't appear active.)
 
     else {
-      _nodes[service.name]?.deactivate();
-
-      // Mark that the widget needs to be rebuilt.
-
-      setState(() {});
-      dev.log("deactivate node ${service.name}", name: "mDNS");
+      setState(() {
+        _nodes[service.name]?.deactivate();
+        dev.log("deactivate node ${service.name}", name: "mDNS");
+      });
     }
   }
 
   @override
-  Widget build(BuildContext context) => FutureBuilder(
-      future: _fut,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          disc = snapshot.data!;
-          dev.log("mDNS running", name: "mDNS");
-        }
-
-        return _DrMemNodeModel(
-          nodes: Map.unmodifiable(_nodes),
-          child: widget.child,
-        );
-      });
+  Widget build(BuildContext context) => _DrMemNodeModel(
+        nodes: Map.unmodifiable(_nodes),
+        child: widget.child,
+      );
 }
