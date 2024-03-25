@@ -11,4 +11,3 @@ export 'src/device_like.dart';
 export 'src/device_history.dart';
 export 'src/reading.dart';
 export 'src/drmem_widget.dart';
-export 'src/drmem_monitor.dart';

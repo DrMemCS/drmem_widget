@@ -8,13 +8,14 @@
 
 library drmem_widget;
 
-import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:gql_websocket_link/gql_websocket_link.dart';
 import 'package:gql_http_link/gql_http_link.dart';
 import 'package:ferry/ferry.dart';
+import 'package:nsd/nsd.dart';
 import 'package:built_collection/built_collection.dart';
 import 'schema/__generated__/set_device.data.gql.dart';
 import 'schema/__generated__/set_device.req.gql.dart';
@@ -33,8 +34,54 @@ import 'reading.dart';
 import 'driver_info.dart';
 import 'device_info.dart';
 
+import 'dart:developer' as dev;
+
 typedef _NodeValue = (NodeInfo, Client, Client);
 typedef _NodeMap = Map<String, _NodeValue>;
+
+// Takes a string in "host:port" format and returns a HostInfo type. If it
+// can't be parsed, `null` is returned.
+
+HostInfo? _parseHostInfo(String? s) {
+  if (s?.split(":") case [String host, String tmp]) {
+    final port = int.tryParse(tmp);
+
+    if (port != null) {
+      return (host, port);
+    }
+  }
+  return null;
+}
+
+String _stripTrailingPeriod(String s) =>
+    s.endsWith(".") ? s.substring(0, s.length - 1) : s;
+
+// Creates a [Reading] value from a set of values. This fucntion uses a
+// `switch` statement with pattern matching to make sure the parameters
+// specify a correctly formatted, single device value.
+
+Reading _fromParams(
+        DateTime dt, bool? b, int? i, double? d, String? s, List<int>? c) =>
+    Reading(
+        dt,
+        switch ((b, i, d, s, c)) {
+          (_, null, null, null, null) when b != null => DevBool(value: b),
+          (null, _, null, null, null) when i != null => DevInt(value: i),
+          (null, null, _, null, null) when d != null => DevFlt(value: d),
+          (null, null, null, _, null) when s != null => DevStr(value: s),
+          (null, null, null, null, [int r, int g, int b]) =>
+            DevColor(red: r, green: g, blue: b),
+          (null, null, null, null, _) when c != null =>
+            throw (Exception("wrong number of color components")),
+          (null, null, null, null, null) =>
+            throw (Exception("reading has no data")),
+          _ => throw (Exception("reading has multiple value types"))
+        });
+
+// Creates a [DriverInfo] object from a GraphQL [driverInfo] reply value.
+
+DriverInfo _driverInfoFrom(GAllDriversData_driverInfo o) =>
+    DriverInfo(o.name, o.summary, o.description);
 
 // Local extension(s) to the [DevValue] type. These aren't made public because
 // they're only useful for this widget when interacting with the GraphQL API.
@@ -69,14 +116,14 @@ extension on GGetDeviceData_deviceInfo_history {
     if (oldest != null && newest != null) {
       return DeviceHistory(
           totalPoints,
-          fromParams(
+          _fromParams(
               oldest.stamp,
               oldest.boolValue,
               oldest.intValue,
               oldest.floatValue,
               oldest.stringValue,
               oldest.colorValue?.toList()),
-          fromParams(
+          _fromParams(
               newest.stamp,
               newest.boolValue,
               newest.intValue,
@@ -95,43 +142,50 @@ extension on GGetDeviceData_deviceInfo_history {
 extension on GSetDeviceData_setDevice {
   // Creates a [Reading] value from a GraphQL [setDevice] reply value.
 
-  Reading toReading() => fromParams(stamp, boolValue, intValue, floatValue,
+  Reading toReading() => _fromParams(stamp, boolValue, intValue, floatValue,
       stringValue, colorValue?.toList());
 }
 
-// Creates a [Reading] value from a set of values. This fucntion uses a
-// `switch` statement with pattern matching to make sure the parameters
-// specify a correctly formatted, single device value.
+extension on Service {
+  // Looks in the `txt` field of the Service info for a value associated with
+  // the requested key. If found, it returns the value as a String.
 
-Reading fromParams(
-        DateTime dt, bool? b, int? i, double? d, String? s, List<int>? c) =>
-    Reading(
-        dt,
-        switch ((b, i, d, s, c)) {
-          (_, null, null, null, null) when b != null => DevBool(value: b),
-          (null, _, null, null, null) when i != null => DevInt(value: i),
-          (null, null, _, null, null) when d != null => DevFlt(value: d),
-          (null, null, null, _, null) when s != null => DevStr(value: s),
-          (null, null, null, null, [int r, int g, int b]) =>
-            DevColor(red: r, green: g, blue: b),
-          (null, null, null, null, _) when c != null =>
-            throw (Exception("wrong number of color components")),
-          (null, null, null, null, null) =>
-            throw (Exception("reading has no data")),
-          _ => throw (Exception("reading has multiple value types"))
-        });
+  String? propToString(String key) {
+    final Uint8List? tmp = txt?[key];
 
-// Creates a [DriverInfo] object from a GraphQL [driverInfo] reply value.
+    return tmp != null
+        ? const Utf8Decoder(allowMalformed: true).convert(tmp)
+        : null;
+  }
 
-DriverInfo _driverInfoFrom(GAllDriversData_driverInfo o) =>
-    DriverInfo(o.name, o.summary, o.description);
+  NodeInfo? toNodeInfo() {
+    if (this case Service(name: String n, host: String h, port: int p)) {
+      final addr = _parseHostInfo(propToString("pref-addr")) ??
+          (_stripTrailingPeriod(h), p);
+
+      return NodeInfo(
+        name: n,
+        addr: addr,
+        location: propToString("location") ?? "unknown",
+        version: propToString("version") ?? "0.0.0",
+        bootTime: DateTime.tryParse(propToString("bootTime") ?? ""),
+        signature: propToString("signature"),
+        queries: propToString("queries") ?? "/drmem/q",
+        mutations: propToString("mutations") ?? "/drmem/q",
+        subscriptions: propToString("subscriptions") ?? "/drmem/s",
+      );
+    } else {
+      return null;
+    }
+  }
+}
 
 // This widget implements an inherited model. Each time it's built, it gets a
 // snapshot of the known nodes. Widgets that register with it will get rebuilt
 // when the associated value changes.
 
 class _DrMemModel extends InheritedModel<String> {
-  final _NodeMap nodes;
+  final Map<String, NodeInfo> nodes;
 
   const _DrMemModel(this.nodes, {required super.child});
 
@@ -142,6 +196,12 @@ class _DrMemModel extends InheritedModel<String> {
   @override
   bool updateShouldNotifyDependent(_DrMemModel oldWidget, Set<String> deps) =>
       deps.any((e) => nodes[e] != oldWidget.nodes[e]);
+
+  // Allows a client to handle the case where this model may not be in the
+  // widget tree.
+
+  static _DrMemModel _of(BuildContext context, {String? aspect}) =>
+      InheritedModel.inheritFrom<_DrMemModel>(context, aspect: aspect)!;
 }
 
 /// The [DrMem] widget implements a "provider" widget for an application's
@@ -274,22 +334,53 @@ class DrMem extends StatefulWidget {
           {DateTime? startTime, DateTime? endTime}) =>
       _of(context)
           ._monitorDevice(device, startTime: startTime, endTime: endTime);
+
+  /// Retrieves node information and registers the calling widget to be rebuilt
+  /// if its node of interest gets updated.
+
+  static NodeInfo? getNodeInfo(
+          {required BuildContext context, required String node}) =>
+      _DrMemModel._of(context, aspect: node).nodes[node];
+
+  /// Retrieves all the known node names. The calling widget is registered to
+  /// be rebuilt if any part of the model changes.
+
+  static Iterable<String> getNodeNames({required BuildContext context}) =>
+      _DrMemModel._of(context).nodes.keys;
 }
 
 class _DrMemState extends State<DrMem> {
-  // This map holds the GraphQL endpoints for known, DrMem nodes. If the
-  // endpoints are `null`, we haven't yet made contact with it.
-
-  late _NodeMap _nodes;
+  Discovery? _disc;
+  final _NodeMap _nodes = {};
 
   @override
   void initState() {
-    _nodes = {};
+    dev.log("starting mDNS monitor", name: "mdns.announce");
+    startDiscovery('_drmem._tcp').then((value) {
+      value.addServiceListener(_serviceUpdate);
+      dev.log("registered with mDNS", name: "mdns.announce");
+      setState(() => _disc = value);
+    });
     super.initState();
   }
 
   @override
   void dispose() {
+    final tmp = _disc;
+
+    // Shut down the background thread asynchronously.
+
+    if (tmp != null) {
+      // Unregister synchronously.
+
+      tmp.removeServiceListener(_serviceUpdate);
+      dev.log("unregistered from mDNS", name: "mDNS");
+      Future.microtask(() async {
+        await stopDiscovery(tmp);
+        dev.log("stopped mDNS monitor", name: "mDNS");
+      });
+    }
+
     // Close the connections to DrMem.
 
     for (final MapEntry(value: (_, a, b)) in _nodes.entries) {
@@ -335,6 +426,61 @@ class _DrMemState extends State<DrMem> {
       return Device(node: _nodes.keys.first, name: dev.name);
     } else {
       throw Exception("device needs a node specified");
+    }
+  }
+
+  // Handles all incoming mDNS announcements.
+
+  void _serviceUpdate(Service service, ServiceStatus status) {
+    // If no name is given, the announcement is worthless.
+
+    if (service.name == null) {
+      dev.log("mDNS announcement is missing service name ... ignoring",
+          name: "mDNS");
+      return;
+    }
+
+    // If this is a `found` announcement, we need to add it to the model.
+
+    if (status == ServiceStatus.found) {
+      final ni = service.toNodeInfo();
+
+      // If `ni` isn't null, then we have an address to communicate with.
+      // If no address was found, we can't talk to it, so we ignore the
+      // announcement.
+
+      if (ni != null) {
+        // If the node isn't in the map or it is and we can merge the data
+        // with what's in the map, then update the entry.
+
+        if (_nodes[ni.name] case (NodeInfo info, Client q, Client s)) {
+          if (info.canUpdate(ni)) {
+            setState(() => _nodes[ni.name] = (ni, q, s));
+            dev.log("updated node ${ni.name}", name: "mDNS");
+          } else {
+            dev.log(
+                "node ${ni.name} announced but can't be merged ... ignoring",
+                name: "mDNS");
+          }
+        } else {
+          _addNode(ni);
+          dev.log("added new node ${ni.name}", name: "mDNS");
+        }
+      } else {
+        dev.log(
+            "node ${service.name} doesn't have a valid address ... ignoring",
+            name: "mDNS");
+      }
+    }
+
+    // This is a `lost` announcement. Deactivate the node (it'll appear in the
+    // list but won't appear active.)
+
+    else {
+      setState(() {
+        _nodes[service.name]?.$1.deactivate();
+        dev.log("deactivate node ${service.name}", name: "mDNS");
+      });
     }
   }
 
@@ -461,11 +607,12 @@ class _DrMemState extends State<DrMem> {
           ..vars.range = _buildDateRange(startTime, endTime)))
         .where((response) => !response.loading && response.data != null)
         .map((response) => response.data!.monitorDevice)
-        .map((data) => fromParams(data.stamp, data.boolValue, data.intValue,
+        .map((data) => _fromParams(data.stamp, data.boolValue, data.intValue,
             data.floatValue, data.stringValue, data.colorValue?.toList()));
   }
 
   @override
   Widget build(BuildContext context) =>
-      _DrMemModel({..._nodes}, child: widget.child);
+      _DrMemModel(_nodes.map((key, value) => MapEntry(key, value.$1)),
+          child: widget.child);
 }
