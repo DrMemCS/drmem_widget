@@ -155,10 +155,10 @@ class _DrMemNodesState extends State<DrMemNodes> {
       // Unregister synchronously.
 
       tmp.removeServiceListener(_serviceUpdate);
-      dev.log("unregistered", name: "mDNS");
+      dev.log("unregistered from mDNS", name: "mDNS");
       Future.microtask(() async {
         await stopDiscovery(tmp);
-        dev.log("stopped mDNS", name: "mDNS");
+        dev.log("stopped mDNS monitor", name: "mDNS");
       });
     }
     super.dispose();
