@@ -461,13 +461,8 @@ class _DrMemState extends State<DrMem> {
           ..vars.range = _buildDateRange(startTime, endTime)))
         .where((response) => !response.loading && response.data != null)
         .map((response) => response.data!.monitorDevice)
-        .map((data) => _Convert.fromParams(
-            data.stamp,
-            data.boolValue,
-            data.intValue,
-            data.floatValue,
-            data.stringValue,
-            data.colorValue?.toList()));
+        .map((data) => fromParams(data.stamp, data.boolValue, data.intValue,
+            data.floatValue, data.stringValue, data.colorValue?.toList()));
   }
 
   @override
