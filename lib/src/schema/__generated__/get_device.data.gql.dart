@@ -14,7 +14,7 @@ abstract class GGetDeviceData
     implements Built<GGetDeviceData, GGetDeviceDataBuilder> {
   GGetDeviceData._();
 
-  factory GGetDeviceData([Function(GGetDeviceDataBuilder b) updates]) =
+  factory GGetDeviceData([void Function(GGetDeviceDataBuilder b) updates]) =
       _$GGetDeviceData;
 
   static void _initializeBuilder(GGetDeviceDataBuilder b) =>
@@ -44,7 +44,7 @@ abstract class GGetDeviceData_deviceInfo
   GGetDeviceData_deviceInfo._();
 
   factory GGetDeviceData_deviceInfo(
-          [Function(GGetDeviceData_deviceInfoBuilder b) updates]) =
+          [void Function(GGetDeviceData_deviceInfoBuilder b) updates]) =
       _$GGetDeviceData_deviceInfo;
 
   static void _initializeBuilder(GGetDeviceData_deviceInfoBuilder b) =>
@@ -78,7 +78,7 @@ abstract class GGetDeviceData_deviceInfo_history
   GGetDeviceData_deviceInfo_history._();
 
   factory GGetDeviceData_deviceInfo_history(
-          [Function(GGetDeviceData_deviceInfo_historyBuilder b) updates]) =
+          [void Function(GGetDeviceData_deviceInfo_historyBuilder b) updates]) =
       _$GGetDeviceData_deviceInfo_history;
 
   static void _initializeBuilder(GGetDeviceData_deviceInfo_historyBuilder b) =>
@@ -112,7 +112,7 @@ abstract class GGetDeviceData_deviceInfo_history_firstPoint
   GGetDeviceData_deviceInfo_history_firstPoint._();
 
   factory GGetDeviceData_deviceInfo_history_firstPoint(
-      [Function(GGetDeviceData_deviceInfo_history_firstPointBuilder b)
+      [void Function(GGetDeviceData_deviceInfo_history_firstPointBuilder b)
           updates]) = _$GGetDeviceData_deviceInfo_history_firstPoint;
 
   static void _initializeBuilder(
@@ -150,7 +150,7 @@ abstract class GGetDeviceData_deviceInfo_history_lastPoint
   GGetDeviceData_deviceInfo_history_lastPoint._();
 
   factory GGetDeviceData_deviceInfo_history_lastPoint(
-      [Function(GGetDeviceData_deviceInfo_history_lastPointBuilder b)
+      [void Function(GGetDeviceData_deviceInfo_history_lastPointBuilder b)
           updates]) = _$GGetDeviceData_deviceInfo_history_lastPoint;
 
   static void _initializeBuilder(

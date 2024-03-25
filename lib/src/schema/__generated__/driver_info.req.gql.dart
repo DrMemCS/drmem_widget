@@ -23,7 +23,7 @@ abstract class GAllDriversReq
         _i1.OperationRequest<_i2.GAllDriversData, _i3.GAllDriversVars> {
   GAllDriversReq._();
 
-  factory GAllDriversReq([Function(GAllDriversReqBuilder b) updates]) =
+  factory GAllDriversReq([void Function(GAllDriversReqBuilder b) updates]) =
       _$GAllDriversReq;
 
   static void _initializeBuilder(GAllDriversReqBuilder b) => b
@@ -41,6 +41,7 @@ abstract class GAllDriversReq
   _i4.Request get execRequest => _i4.Request(
         operation: operation,
         variables: vars.toJson(),
+        context: context ?? const _i4.Context(),
       );
 
   @override
@@ -61,6 +62,9 @@ abstract class GAllDriversReq
   _i1.FetchPolicy? get fetchPolicy;
   @override
   bool get executeOnListen;
+  @override
+  @BuiltValueField(serialize: false)
+  _i4.Context? get context;
   @override
   _i2.GAllDriversData? parseData(Map<String, dynamic> json) =>
       _i2.GAllDriversData.fromJson(json);

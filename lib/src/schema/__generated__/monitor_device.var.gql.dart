@@ -15,7 +15,8 @@ abstract class GMonitorDeviceVars
     implements Built<GMonitorDeviceVars, GMonitorDeviceVarsBuilder> {
   GMonitorDeviceVars._();
 
-  factory GMonitorDeviceVars([Function(GMonitorDeviceVarsBuilder b) updates]) =
+  factory GMonitorDeviceVars(
+          [void Function(GMonitorDeviceVarsBuilder b) updates]) =
       _$GMonitorDeviceVars;
 
   String get device;

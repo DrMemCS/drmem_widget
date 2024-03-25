@@ -13,7 +13,8 @@ abstract class GGetAllDevicesVars
     implements Built<GGetAllDevicesVars, GGetAllDevicesVarsBuilder> {
   GGetAllDevicesVars._();
 
-  factory GGetAllDevicesVars([Function(GGetAllDevicesVarsBuilder b) updates]) =
+  factory GGetAllDevicesVars(
+          [void Function(GGetAllDevicesVarsBuilder b) updates]) =
       _$GGetAllDevicesVars;
 
   static Serializer<GGetAllDevicesVars> get serializer =>

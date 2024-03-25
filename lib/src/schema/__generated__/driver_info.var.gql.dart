@@ -13,7 +13,7 @@ abstract class GAllDriversVars
     implements Built<GAllDriversVars, GAllDriversVarsBuilder> {
   GAllDriversVars._();
 
-  factory GAllDriversVars([Function(GAllDriversVarsBuilder b) updates]) =
+  factory GAllDriversVars([void Function(GAllDriversVarsBuilder b) updates]) =
       _$GAllDriversVars;
 
   static Serializer<GAllDriversVars> get serializer =>

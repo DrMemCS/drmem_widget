@@ -14,7 +14,7 @@ abstract class GAllDriversData
     implements Built<GAllDriversData, GAllDriversDataBuilder> {
   GAllDriversData._();
 
-  factory GAllDriversData([Function(GAllDriversDataBuilder b) updates]) =
+  factory GAllDriversData([void Function(GAllDriversDataBuilder b) updates]) =
       _$GAllDriversData;
 
   static void _initializeBuilder(GAllDriversDataBuilder b) =>
@@ -44,7 +44,7 @@ abstract class GAllDriversData_driverInfo
   GAllDriversData_driverInfo._();
 
   factory GAllDriversData_driverInfo(
-          [Function(GAllDriversData_driverInfoBuilder b) updates]) =
+          [void Function(GAllDriversData_driverInfoBuilder b) updates]) =
       _$GAllDriversData_driverInfo;
 
   static void _initializeBuilder(GAllDriversData_driverInfoBuilder b) =>

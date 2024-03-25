@@ -14,7 +14,7 @@ abstract class GSettingData
     implements Built<GSettingData, GSettingDataBuilder> {
   GSettingData._();
 
-  factory GSettingData([Function(GSettingDataBuilder b) updates]) =
+  factory GSettingData([void Function(GSettingDataBuilder b) updates]) =
       _$GSettingData;
 
   @BuiltValueField(wireName: 'int')
@@ -41,7 +41,8 @@ abstract class GSettingData
 abstract class GDateRange implements Built<GDateRange, GDateRangeBuilder> {
   GDateRange._();
 
-  factory GDateRange([Function(GDateRangeBuilder b) updates]) = _$GDateRange;
+  factory GDateRange([void Function(GDateRangeBuilder b) updates]) =
+      _$GDateRange;
 
   DateTime? get start;
   DateTime? get end;

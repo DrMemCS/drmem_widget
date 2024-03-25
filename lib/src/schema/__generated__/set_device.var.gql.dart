@@ -15,7 +15,7 @@ abstract class GSetDeviceVars
     implements Built<GSetDeviceVars, GSetDeviceVarsBuilder> {
   GSetDeviceVars._();
 
-  factory GSetDeviceVars([Function(GSetDeviceVarsBuilder b) updates]) =
+  factory GSetDeviceVars([void Function(GSetDeviceVarsBuilder b) updates]) =
       _$GSetDeviceVars;
 
   String get device;

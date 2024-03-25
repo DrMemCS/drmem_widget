@@ -14,7 +14,7 @@ abstract class GSetDeviceData
     implements Built<GSetDeviceData, GSetDeviceDataBuilder> {
   GSetDeviceData._();
 
-  factory GSetDeviceData([Function(GSetDeviceDataBuilder b) updates]) =
+  factory GSetDeviceData([void Function(GSetDeviceDataBuilder b) updates]) =
       _$GSetDeviceData;
 
   static void _initializeBuilder(GSetDeviceDataBuilder b) =>
@@ -44,7 +44,7 @@ abstract class GSetDeviceData_setDevice
   GSetDeviceData_setDevice._();
 
   factory GSetDeviceData_setDevice(
-          [Function(GSetDeviceData_setDeviceBuilder b) updates]) =
+          [void Function(GSetDeviceData_setDeviceBuilder b) updates]) =
       _$GSetDeviceData_setDevice;
 
   static void _initializeBuilder(GSetDeviceData_setDeviceBuilder b) =>

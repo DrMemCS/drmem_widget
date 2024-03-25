@@ -13,7 +13,7 @@ abstract class GGetDeviceVars
     implements Built<GGetDeviceVars, GGetDeviceVarsBuilder> {
   GGetDeviceVars._();
 
-  factory GGetDeviceVars([Function(GGetDeviceVarsBuilder b) updates]) =
+  factory GGetDeviceVars([void Function(GGetDeviceVarsBuilder b) updates]) =
       _$GGetDeviceVars;
 
   String get name;

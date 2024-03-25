@@ -23,7 +23,8 @@ abstract class GMonitorDeviceReq
         _i1.OperationRequest<_i2.GMonitorDeviceData, _i3.GMonitorDeviceVars> {
   GMonitorDeviceReq._();
 
-  factory GMonitorDeviceReq([Function(GMonitorDeviceReqBuilder b) updates]) =
+  factory GMonitorDeviceReq(
+          [void Function(GMonitorDeviceReqBuilder b) updates]) =
       _$GMonitorDeviceReq;
 
   static void _initializeBuilder(GMonitorDeviceReqBuilder b) => b
@@ -41,6 +42,7 @@ abstract class GMonitorDeviceReq
   _i4.Request get execRequest => _i4.Request(
         operation: operation,
         variables: vars.toJson(),
+        context: context ?? const _i4.Context(),
       );
 
   @override
@@ -61,6 +63,9 @@ abstract class GMonitorDeviceReq
   _i1.FetchPolicy? get fetchPolicy;
   @override
   bool get executeOnListen;
+  @override
+  @BuiltValueField(serialize: false)
+  _i4.Context? get context;
   @override
   _i2.GMonitorDeviceData? parseData(Map<String, dynamic> json) =>
       _i2.GMonitorDeviceData.fromJson(json);

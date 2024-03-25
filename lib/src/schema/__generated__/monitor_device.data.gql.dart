@@ -14,7 +14,8 @@ abstract class GMonitorDeviceData
     implements Built<GMonitorDeviceData, GMonitorDeviceDataBuilder> {
   GMonitorDeviceData._();
 
-  factory GMonitorDeviceData([Function(GMonitorDeviceDataBuilder b) updates]) =
+  factory GMonitorDeviceData(
+          [void Function(GMonitorDeviceDataBuilder b) updates]) =
       _$GMonitorDeviceData;
 
   static void _initializeBuilder(GMonitorDeviceDataBuilder b) =>
@@ -45,7 +46,7 @@ abstract class GMonitorDeviceData_monitorDevice
   GMonitorDeviceData_monitorDevice._();
 
   factory GMonitorDeviceData_monitorDevice(
-          [Function(GMonitorDeviceData_monitorDeviceBuilder b) updates]) =
+          [void Function(GMonitorDeviceData_monitorDeviceBuilder b) updates]) =
       _$GMonitorDeviceData_monitorDevice;
 
   static void _initializeBuilder(GMonitorDeviceData_monitorDeviceBuilder b) =>

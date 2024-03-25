@@ -14,12 +14,11 @@ dependencies:
   gql_http_link: ^1.0.1
   gql_websocket_link: ^2.0.0
   web_socket_channel: ^2.4.0
-  ferry: ^0.15.0+1
-  ferry_flutter: ^0.9.0
+  ferry: ^0.16.0
 
-  nsd: "^2.3.1"
+  nsd: "^3.0.0"
 
-  built_value: ^8.6.2
+  built_value: ^8.9.0
   built_collection: ^5.1.1
 
 dev_dependencies:
@@ -28,7 +27,7 @@ dev_dependencies:
   flutter_lints: ^3.0.0
 
   build_runner: ^2.4.6
-  ferry_generator: ^0.9.0-dev.1
+  ferry_generator: ^0.10.0
 
 dependency_overrides:
   analyzer: ^6.2.0

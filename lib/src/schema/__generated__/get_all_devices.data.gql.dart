@@ -14,7 +14,8 @@ abstract class GGetAllDevicesData
     implements Built<GGetAllDevicesData, GGetAllDevicesDataBuilder> {
   GGetAllDevicesData._();
 
-  factory GGetAllDevicesData([Function(GGetAllDevicesDataBuilder b) updates]) =
+  factory GGetAllDevicesData(
+          [void Function(GGetAllDevicesDataBuilder b) updates]) =
       _$GGetAllDevicesData;
 
   static void _initializeBuilder(GGetAllDevicesDataBuilder b) =>
@@ -45,7 +46,7 @@ abstract class GGetAllDevicesData_deviceInfo
   GGetAllDevicesData_deviceInfo._();
 
   factory GGetAllDevicesData_deviceInfo(
-          [Function(GGetAllDevicesData_deviceInfoBuilder b) updates]) =
+          [void Function(GGetAllDevicesData_deviceInfoBuilder b) updates]) =
       _$GGetAllDevicesData_deviceInfo;
 
   static void _initializeBuilder(GGetAllDevicesData_deviceInfoBuilder b) =>
@@ -80,8 +81,8 @@ abstract class GGetAllDevicesData_deviceInfo_history
   GGetAllDevicesData_deviceInfo_history._();
 
   factory GGetAllDevicesData_deviceInfo_history(
-          [Function(GGetAllDevicesData_deviceInfo_historyBuilder b) updates]) =
-      _$GGetAllDevicesData_deviceInfo_history;
+      [void Function(GGetAllDevicesData_deviceInfo_historyBuilder b)
+          updates]) = _$GGetAllDevicesData_deviceInfo_history;
 
   static void _initializeBuilder(
           GGetAllDevicesData_deviceInfo_historyBuilder b) =>
@@ -115,7 +116,7 @@ abstract class GGetAllDevicesData_deviceInfo_history_firstPoint
   GGetAllDevicesData_deviceInfo_history_firstPoint._();
 
   factory GGetAllDevicesData_deviceInfo_history_firstPoint(
-      [Function(GGetAllDevicesData_deviceInfo_history_firstPointBuilder b)
+      [void Function(GGetAllDevicesData_deviceInfo_history_firstPointBuilder b)
           updates]) = _$GGetAllDevicesData_deviceInfo_history_firstPoint;
 
   static void _initializeBuilder(
@@ -154,7 +155,7 @@ abstract class GGetAllDevicesData_deviceInfo_history_lastPoint
   GGetAllDevicesData_deviceInfo_history_lastPoint._();
 
   factory GGetAllDevicesData_deviceInfo_history_lastPoint(
-      [Function(GGetAllDevicesData_deviceInfo_history_lastPointBuilder b)
+      [void Function(GGetAllDevicesData_deviceInfo_history_lastPointBuilder b)
           updates]) = _$GGetAllDevicesData_deviceInfo_history_lastPoint;
 
   static void _initializeBuilder(
@@ -193,8 +194,8 @@ abstract class GGetAllDevicesData_deviceInfo_driver
   GGetAllDevicesData_deviceInfo_driver._();
 
   factory GGetAllDevicesData_deviceInfo_driver(
-          [Function(GGetAllDevicesData_deviceInfo_driverBuilder b) updates]) =
-      _$GGetAllDevicesData_deviceInfo_driver;
+      [void Function(GGetAllDevicesData_deviceInfo_driverBuilder b)
+          updates]) = _$GGetAllDevicesData_deviceInfo_driver;
 
   static void _initializeBuilder(
           GGetAllDevicesData_deviceInfo_driverBuilder b) =>

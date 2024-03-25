@@ -23,7 +23,8 @@ abstract class GGetAllDevicesReq
         _i1.OperationRequest<_i2.GGetAllDevicesData, _i3.GGetAllDevicesVars> {
   GGetAllDevicesReq._();
 
-  factory GGetAllDevicesReq([Function(GGetAllDevicesReqBuilder b) updates]) =
+  factory GGetAllDevicesReq(
+          [void Function(GGetAllDevicesReqBuilder b) updates]) =
       _$GGetAllDevicesReq;
 
   static void _initializeBuilder(GGetAllDevicesReqBuilder b) => b
@@ -41,6 +42,7 @@ abstract class GGetAllDevicesReq
   _i4.Request get execRequest => _i4.Request(
         operation: operation,
         variables: vars.toJson(),
+        context: context ?? const _i4.Context(),
       );
 
   @override
@@ -61,6 +63,9 @@ abstract class GGetAllDevicesReq
   _i1.FetchPolicy? get fetchPolicy;
   @override
   bool get executeOnListen;
+  @override
+  @BuiltValueField(serialize: false)
+  _i4.Context? get context;
   @override
   _i2.GGetAllDevicesData? parseData(Map<String, dynamic> json) =>
       _i2.GGetAllDevicesData.fromJson(json);
