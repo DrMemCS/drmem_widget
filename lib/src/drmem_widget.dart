@@ -36,6 +36,9 @@ import 'device_info.dart';
 typedef _NodeValue = (NodeInfo, Client, Client);
 typedef _NodeMap = Map<String, _NodeValue>;
 
+// Local extension(s) to the [DevValue] type. These aren't made public because
+// they're only useful for this widget when interacting with the GraphQL API.
+
 extension on DevValue {
   // Adds a method to the DevValue classes which can convert a value into a
   // builder of [GSettingData]. This is used when a client wants to make a
