@@ -176,7 +176,7 @@ class DrMem extends StatefulWidget {
   /// [sEnd] is the URL path needed to get to the GraphQL subscription handler.
 
   static void addNode(BuildContext context, NodeInfo info) =>
-      _of(context).addNode(info);
+      _of(context)._addNode(info);
 
   /// Removes a node from the table.
   ///
@@ -185,7 +185,7 @@ class DrMem extends StatefulWidget {
   /// [name] is the name of the node. All DrMem nodes should have unique names.
 
   static void removeNode(BuildContext context, String name) =>
-      _of(context).removeNode(name);
+      _of(context)._removeNode(name);
 
   /// Sets a value of a DrMem device.
   ///
@@ -208,7 +208,7 @@ class DrMem extends StatefulWidget {
 
   static Future<Reading> setDevice(
           BuildContext context, Device device, DevValue value) =>
-      _of(context).setDevice(device, value);
+      _of(context)._setDevice(device, value);
 
   /// Retrieves driver information from a DrMem node.
   ///
@@ -223,7 +223,7 @@ class DrMem extends StatefulWidget {
 
   static Future<List<DriverInfo>> getDriverInfo(
           BuildContext context, String node) =>
-      _of(context).getDriverInfo(node);
+      _of(context)._getDriverInfo(node);
 
   /// Returns information about a device.
   ///
@@ -241,7 +241,7 @@ class DrMem extends StatefulWidget {
 
   static Future<List<DeviceInfo>> getDeviceInfo(BuildContext context,
           {required DevicePattern device}) =>
-      _of(context).getDeviceInfo(device: device);
+      _of(context)._getDeviceInfo(device: device);
 
   /// Returns a stream of readings for a device.
   ///
@@ -270,7 +270,7 @@ class DrMem extends StatefulWidget {
   static Stream<Reading> monitorDevice(BuildContext context, Device device,
           {DateTime? startTime, DateTime? endTime}) =>
       _of(context)
-          .monitorDevice(device, startTime: startTime, endTime: endTime);
+          ._monitorDevice(device, startTime: startTime, endTime: endTime);
 }
 
 class _DrMemState extends State<DrMem> {
@@ -337,7 +337,7 @@ class _DrMemState extends State<DrMem> {
 
   // The implementation of [DrMem.addNode].
 
-  void addNode(NodeInfo info) {
+  void _addNode(NodeInfo info) {
     final (qUri, sUri) = _buildUris(
         host: info.addr, qEnd: info.queries, sEnd: info.subscriptions);
     final qClient = Client(link: HttpLink(qUri.toString()), cache: Cache());
@@ -353,7 +353,7 @@ class _DrMemState extends State<DrMem> {
 
   // The implementation of [DrMem.removeNode].
 
-  void removeNode(String name) => setState(() => _nodes.remove(name));
+  void _removeNode(String name) => setState(() => _nodes.remove(name));
 
   // Translates the response of a [getDeviceInfo] query into a `List<DevInfo>`.
 
@@ -409,7 +409,7 @@ class _DrMemState extends State<DrMem> {
 
   // The implmentation of [DrMem.setDevice].
 
-  Future<Reading> setDevice(Device device, DevValue value) => _rpc(
+  Future<Reading> _setDevice(Device device, DevValue value) => _rpc(
       _resolve(device).node!,
       GSetDeviceReq((b) => b
         ..vars.device = device.name
@@ -418,7 +418,7 @@ class _DrMemState extends State<DrMem> {
 
   // The implementation of [DrMem.getDriverInfo].
 
-  Future<List<DriverInfo>> getDriverInfo(String node) => _rpc(
+  Future<List<DriverInfo>> _getDriverInfo(String node) => _rpc(
         node,
         GAllDriversReq((b) => b),
         (result) => result.driverInfo.map(_driverInfoFrom).toList(),
@@ -426,7 +426,7 @@ class _DrMemState extends State<DrMem> {
 
   // This is the implementation of [DrMem.getDeviceInfo].
 
-  Future<List<DeviceInfo>> getDeviceInfo({required DevicePattern device}) =>
+  Future<List<DeviceInfo>> _getDeviceInfo({required DevicePattern device}) =>
       _rpc(device.node, GGetDeviceReq((b) => b..vars.name = device.name),
           _toDevInfoList);
 
@@ -447,7 +447,7 @@ class _DrMemState extends State<DrMem> {
 
   // The implementation of [DrMem.monitorDevice].
 
-  Stream<Reading> monitorDevice(Device device,
+  Stream<Reading> _monitorDevice(Device device,
       {DateTime? startTime, DateTime? endTime}) {
     final dev = _resolve(device);
     final (_, sub) = _getHandles(dev.node!);
