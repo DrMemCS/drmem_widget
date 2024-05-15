@@ -516,12 +516,10 @@ class _DrMemState extends State<DrMem> {
   // Gets the two GraphQL handles associated with the specified node.
 
   (Client, Client) _getHandles(String node) {
-    final entry = _nodes[node];
-
-    if (entry != null) {
-      return (entry.$2, entry.$3);
+    if (_nodes[node] case (_, Client q, Client s)) {
+      return (q, s);
     } else {
-      throw Exception('node `$node` is not known');
+      throw ArgumentError("node '$node' not found");
     }
   }
 
@@ -533,7 +531,7 @@ class _DrMemState extends State<DrMem> {
 
   Future<Result> _rpc<TData, TVars, Result>(String node,
       OperationRequest<TData, TVars> request, Result Function(TData) xlat) {
-    final (query, _) = _getHandles(node);
+    final (Client query, _) = _getHandles(node);
 
     return query
         .request(request)
@@ -597,7 +595,7 @@ class _DrMemState extends State<DrMem> {
   Stream<Reading> _monitorDevice(Device device,
       {DateTime? startTime, DateTime? endTime}) {
     final dev = _resolve(device);
-    final (_, sub) = _getHandles(dev.node!);
+    final (_, Client sub) = _getHandles(dev.node!);
 
     return sub
         .request(GMonitorDeviceReq((b) => b
