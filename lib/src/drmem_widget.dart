@@ -373,9 +373,9 @@ class _DrMemState extends State<DrMem> {
   void initState() {
     dev.log("starting mDNS monitor", name: "mdns.announce");
     startDiscovery('_drmem._tcp').then((value) {
+      _disc = value;
       value.addServiceListener(_serviceUpdate);
       dev.log("registered with mDNS", name: "mdns.announce");
-      setState(() => _disc = value);
     });
     super.initState();
   }
