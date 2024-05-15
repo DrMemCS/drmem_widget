@@ -63,8 +63,8 @@ String _stripTrailingPeriod(String s) =>
 Reading _fromParams(
         DateTime dt, bool? b, int? i, double? d, String? s, List<int>? c) =>
     Reading(
-        dt,
-        switch ((b, i, d, s, c)) {
+        stamp: dt,
+        value: switch ((b, i, d, s, c)) {
           (_, null, null, null, null) when b != null => DevBool(value: b),
           (null, _, null, null, null) when i != null => DevInt(value: i),
           (null, null, _, null, null) when d != null => DevFlt(value: d),
@@ -113,26 +113,24 @@ extension on GGetDeviceData_deviceInfo_history {
     final oldest = firstPoint;
     final newest = lastPoint;
 
-    if (oldest != null && newest != null) {
-      return DeviceHistory(
-          totalPoints,
-          _fromParams(
-              oldest.stamp,
-              oldest.boolValue,
-              oldest.intValue,
-              oldest.floatValue,
-              oldest.stringValue,
-              oldest.colorValue?.toList()),
-          _fromParams(
-              newest.stamp,
-              newest.boolValue,
-              newest.intValue,
-              newest.floatValue,
-              newest.stringValue,
-              newest.colorValue?.toList()));
-    } else {
-      return null;
-    }
+    return (oldest != null && newest != null)
+        ? DeviceHistory(
+            totalPoints: totalPoints,
+            oldest: _fromParams(
+                oldest.stamp,
+                oldest.boolValue,
+                oldest.intValue,
+                oldest.floatValue,
+                oldest.stringValue,
+                oldest.colorValue?.toList()),
+            newest: _fromParams(
+                newest.stamp,
+                newest.boolValue,
+                newest.intValue,
+                newest.floatValue,
+                newest.stringValue,
+                newest.colorValue?.toList()))
+        : null;
   }
 }
 

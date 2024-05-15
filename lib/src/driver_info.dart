@@ -1,7 +1,10 @@
 library;
 
+import "package:flutter/foundation.dart";
+
 /// The result type for the [DrMem.getDriverInfo] query.
 
+@immutable
 class DriverInfo {
   /// The name of the driver.
   final String name;

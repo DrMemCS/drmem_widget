@@ -8,9 +8,11 @@
 library;
 
 import "dart:math";
+import "package:flutter/foundation.dart";
 
 /// The base class for all types returned by a device. This class is `sealed`
 /// so new variants can't be created outside of this module.
+@immutable
 sealed class DevValue {
   const DevValue();
 }
