@@ -46,9 +46,7 @@ HostInfo? _parseHostInfo(String? s) {
   if (s?.split(":") case [String host, String tmp]) {
     final port = int.tryParse(tmp);
 
-    if (port != null) {
-      return (host, port);
-    }
+    if (port != null) return (host, port);
   }
   return null;
 }
