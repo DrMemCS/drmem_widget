@@ -53,6 +53,9 @@ HostInfo? _parseHostInfo(String? s) {
   return null;
 }
 
+// Removes a trailing period. Under OSX, a local hostname is given as
+// "name.local." so we need to remove the trailing period.
+
 String _stripTrailingPeriod(String s) =>
     s.endsWith(".") ? s.substring(0, s.length - 1) : s;
 
@@ -261,11 +264,12 @@ class DrMem extends StatefulWidget {
   /// is sent, the driver will return an error. See the driver documentation
   /// to see what data type is supported by the device.
   ///
-  /// The function returns a [Reading] structure echoing the setting and
-  /// containing the timestamp of when the setting was applied. Some drivers
-  /// will return an error when a setting value is out of range. Other drivers
-  /// may accept the value, but clip it to remain in range. See the driver docs
-  /// to understand the behavior.
+  /// The function returns a [Reading] structure echoing the setting used by
+  /// the driver and containing the timestamp of when the setting was applied.
+  /// Some drivers will return an error when a setting value is out of range.
+  /// Other drivers may accept the value, but clip it to remain in range. See
+  /// the driver docs to understand the behavior since the returned value may
+  /// differ from the one sent.
 
   static Future<Reading> setDevice(
           BuildContext context, Device device, DevValue value) =>
