@@ -4,13 +4,10 @@ class DateSerializer implements PrimitiveSerializer<DateTime> {
   @override
   DateTime deserialize(
     Serializers serializers,
-    Object serialized, {
+    covariant String serialized, {
     FullType specifiedType = FullType.unspecified,
-  }) {
-    assert(serialized is String,
-        "DateSerializer expected 'String' but got ${serialized.runtimeType}");
-    return DateTime.parse(serialized as String);
-  }
+  }) =>
+      DateTime.parse(serialized);
 
   @override
   Object serialize(
