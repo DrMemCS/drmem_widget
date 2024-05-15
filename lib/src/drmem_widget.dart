@@ -25,6 +25,8 @@ import 'schema/__generated__/driver_info.req.gql.dart';
 import 'schema/__generated__/get_device.data.gql.dart';
 import 'schema/__generated__/get_device.req.gql.dart';
 import 'schema/__generated__/monitor_device.req.gql.dart';
+import 'schema/__generated__/monitor_device.data.gql.dart';
+import 'schema/__generated__/monitor_device.var.gql.dart';
 
 import 'device_value.dart';
 import 'device_like.dart';
@@ -221,6 +223,20 @@ class DrMem extends StatefulWidget {
   static _DrMemState _of(BuildContext context) =>
       context.findAncestorStateOfType<_DrMemState>()!;
 
+  /// Returns a snapshot of the current node table. This should only be used
+  /// to grab the state in order to save it to persistent storgae, for instance.
+
+  List<Map<String, dynamic>> getNodeTableState(BuildContext context) =>
+      context.findAncestorStateOfType<_DrMemState>()!.nodeTable;
+
+  /// Use this property to reset the table into a previous state. All current
+  /// information will be lost and replaced. The map should be compatible with
+  /// the map returned by [getNodeTableState]. Any portion of [state] that
+  /// can't be used to restore a nodetbale entry will be ignored.
+
+  setNodeTableState(BuildContext context, List<Map<String, dynamic>> state) =>
+      context.findAncestorStateOfType<_DrMemState>()!.nodeTable = state;
+
   /// Adds a new node to the table of known DrMem nodes. When this completes,
   /// the application can interact with the node using the rest of the API.
   ///
@@ -388,6 +404,70 @@ class _DrMemState extends State<DrMem> {
       b.dispose();
     }
     super.dispose();
+  }
+
+  // Returns an unmodifiable version of the node table.
+
+  List<Map<String, dynamic>> get nodeTable => _nodes.entries.map((entry) {
+        final (v, _, _) = entry.value;
+
+        return <String, dynamic>{
+          'name': v.name,
+          'version': v.version,
+          'location': v.location,
+          'host': v.addr.$1,
+          'port': v.addr.$2,
+          'signature': v.signature,
+          'boottime': v.bootTime?.toIso8601String(),
+          'queries': v.queries,
+          'mutations': v.mutations,
+          'subscriptions': v.subscriptions
+        };
+      }).toList();
+
+  // Sets the contents of the node table to [map]. Any entries in [map] that
+  // don't follow the format for the node table will be ignored.
+
+  set nodeTable(List<Map<String, dynamic>> l) {
+    // Remove the old nodes, one by one. It needs to be done this way because
+    // `_removeNode` will notifiy widgets that their node has been updated.
+    // Doing a `_nodes.clear()` wouldn't notify them.
+
+    final oldNodes = _nodes.keys.toList();
+
+    for (final node in oldNodes) {
+      _removeNode(node);
+    }
+
+    // Now populate the empty node table with entries from the parameter.
+    // Ignore any entries that don't have the proper keys or values.
+
+    for (final ii in l) {
+      if (ii
+          case {
+            'name': String name,
+            'version': String version,
+            'location': String location,
+            'host': String host,
+            'port': int port,
+            'signature': String? signature,
+            'boottime': String? bootTime,
+            'queries': String queries,
+            'mutations': String mutations,
+            'subscriptions': String subscriptions
+          }) {
+        _addNode(NodeInfo(
+            name: name,
+            version: version,
+            location: location,
+            addr: (host, port),
+            bootTime: bootTime != null ? DateTime.tryParse(bootTime) : null,
+            signature: signature,
+            queries: queries,
+            mutations: mutations,
+            subscriptions: subscriptions));
+      }
+    }
   }
 
   // Helper function to create the GraphQL query URI.
