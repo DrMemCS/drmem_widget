@@ -580,14 +580,19 @@ class _DrMemState extends State<DrMem> {
   // date range (i.e. `null`). Otherwise we return a builder (possibly with
   // one of the date fields `null`.)
 
-  GDateRangeBuilder? _buildDateRange(DateTime? a, DateTime? b) {
-    if (a != null && b != null) {
-      return GDateRangeBuilder()
-        ..start = a
-        ..end = b;
-    } else {
-      return null;
-    }
+  GDateRangeBuilder? _buildDateRange(DateTime? a, DateTime? b) =>
+      (a != null || b != null)
+          ? (GDateRangeBuilder()
+            ..start = a
+            ..end = b)
+          : null;
+
+  static Reading _monDevRespToReading(
+      OperationResponse<GMonitorDeviceData, GMonitorDeviceVars> response) {
+    final data = response.data!.monitorDevice;
+
+    return _fromParams(data.stamp, data.boolValue, data.intValue,
+        data.floatValue, data.stringValue, data.colorValue?.toList());
   }
 
   // The implementation of [DrMem.monitorDevice].
@@ -602,9 +607,7 @@ class _DrMemState extends State<DrMem> {
           ..vars.device = device.name
           ..vars.range = _buildDateRange(startTime, endTime)))
         .where((response) => !response.loading && response.data != null)
-        .map((response) => response.data!.monitorDevice)
-        .map((data) => _fromParams(data.stamp, data.boolValue, data.intValue,
-            data.floatValue, data.stringValue, data.colorValue?.toList()));
+        .map(_monDevRespToReading);
   }
 
   @override
