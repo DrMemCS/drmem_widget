@@ -50,9 +50,15 @@ class DevColor extends DevValue {
   final int red;
   final int green;
   final int blue;
+  final int alpha;
 
-  DevColor({required red, required green, required blue})
+  DevColor(
+      {required int red,
+      required int green,
+      required int blue,
+      int alpha = 255})
       : red = min(255, max(0, red)),
         green = min(255, max(0, green)),
-        blue = min(255, max(0, blue));
+        blue = min(255, max(0, blue)),
+        alpha = min(255, max(0, alpha));
 }

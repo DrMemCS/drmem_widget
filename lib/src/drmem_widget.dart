@@ -66,8 +66,10 @@ extension on DevValue {
         DevInt(value: int value) => GSettingDataBuilder()..Gint = value,
         DevFlt(value: double value) => GSettingDataBuilder()..flt = value,
         DevStr(value: String value) => GSettingDataBuilder()..str = value,
-        DevColor(red: int r, green: int g, blue: int b) => GSettingDataBuilder()
-          ..color = ListBuilder([r, g, b])
+        DevColor(red: int r, green: int g, blue: int b, alpha: 255) =>
+          GSettingDataBuilder()..color = ListBuilder([r, g, b]),
+        DevColor(red: int r, green: int g, blue: int b, alpha: int a) =>
+          GSettingDataBuilder()..color = ListBuilder([r, g, b, a]),
       };
 }
 
