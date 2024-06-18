@@ -119,7 +119,7 @@ extension on Service {
   // Looks in the `txt` field of the Service info for a value associated with
   // the requested key. If found, it returns the value as a String.
 
-  String? propToString(String key) {
+  String? _propToString(String key) {
     final Uint8List? tmp = txt?[key];
 
     return tmp != null
@@ -129,19 +129,19 @@ extension on Service {
 
   NodeInfo? toNodeInfo() {
     if (this case Service(name: String n, host: String h, port: int p)) {
-      final addr = HostInfo.tryParse(propToString("pref-addr")) ??
+      final addr = HostInfo.tryParse(_propToString("pref-addr")) ??
           HostInfo(_stripTrailingPeriod(h), p);
 
       return NodeInfo(
         name: n,
         addr: addr,
-        location: propToString("location") ?? "unknown",
-        version: propToString("version") ?? "0.0.0",
-        bootTime: DateTime.tryParse(propToString("bootTime") ?? ""),
-        signature: propToString("signature"),
-        queries: propToString("queries") ?? "/drmem/q",
-        mutations: propToString("mutations") ?? "/drmem/q",
-        subscriptions: propToString("subscriptions") ?? "/drmem/s",
+        location: _propToString("location") ?? "unknown",
+        version: _propToString("version") ?? "0.0.0",
+        bootTime: DateTime.tryParse(_propToString("bootTime") ?? ""),
+        signature: _propToString("signature"),
+        queries: _propToString("queries") ?? "/drmem/q",
+        mutations: _propToString("mutations") ?? "/drmem/q",
+        subscriptions: _propToString("subscriptions") ?? "/drmem/s",
       );
     } else {
       return null;
