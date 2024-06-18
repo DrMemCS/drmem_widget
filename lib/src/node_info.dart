@@ -2,9 +2,37 @@
 library;
 
 import "package:flutter/foundation.dart";
-import 'dart:developer' as developer;
+import 'dart:developer' as dev;
 
-typedef HostInfo = (String, int);
+/// Creates a wrapper type for a host/port pair.
+
+extension type HostInfo._((String, int) v) {
+  /// Creates a new instance of the type given the supplied host and port
+  /// values.
+
+  HostInfo(String host, int port) : v = (host, port);
+
+  /// Retrieves the host portion of the value.
+
+  String get host => v.$1;
+
+  /// Retrieves the port portion of the value.
+
+  int get port => v.$2;
+
+  /// Parses a string in the form "host:port" and returns it as a HostInfo
+  /// value. If there is a problem parsing the string, null is returned.
+
+  @factory
+  static HostInfo? tryParse(String? s) {
+    if (s?.split(":") case [String host, String tmp]) {
+      final port = int.tryParse(tmp);
+
+      if (port != null) return HostInfo(host, port);
+    }
+    return null;
+  }
+}
 
 /// Information associated with DrMem nodes.
 ///
@@ -78,7 +106,7 @@ class NodeInfo {
       'name': name,
       'version': version,
       'location': location,
-      'addr': {'host': addr.$1, 'port': addr.$2},
+      'addr': {'host': addr.host, 'port': addr.port},
       'queries': queries,
       'mutations': mutations,
       'subscriptions': subscriptions
@@ -123,7 +151,7 @@ class NodeInfo {
             name: name,
             version: version,
             location: location,
-            addr: (host, port),
+            addr: HostInfo(host, port),
             signature: sig,
             bootTime: bt != null ? DateTime.parse(bt) : bt,
             queries: queries,
@@ -131,7 +159,7 @@ class NodeInfo {
             subscriptions: subscriptions);
       }
     }
-    developer.log("couldn't restore node info for $json ... dropping from list",
+    dev.log("couldn't restore node info for $json ... dropping from list",
         name: "NodeInfo.fromJson");
     return null;
   }

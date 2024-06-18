@@ -41,18 +41,6 @@ import 'dart:developer' as dev;
 typedef _NodeValue = (NodeInfo, Client, Client);
 typedef _NodeMap = Map<String, _NodeValue>;
 
-// Takes a string in "host:port" format and returns a HostInfo type. If it
-// can't be parsed, `null` is returned.
-
-HostInfo? _parseHostInfo(String? s) {
-  if (s?.split(":") case [String host, String tmp]) {
-    final port = int.tryParse(tmp);
-
-    if (port != null) return (host, port);
-  }
-  return null;
-}
-
 // Removes a trailing period. Under OSX, a local hostname is given as
 // "name.local." so we need to remove the trailing period.
 
@@ -139,8 +127,8 @@ extension on Service {
 
   NodeInfo? toNodeInfo() {
     if (this case Service(name: String n, host: String h, port: int p)) {
-      final addr = _parseHostInfo(propToString("pref-addr")) ??
-          (_stripTrailingPeriod(h), p);
+      final addr = HostInfo.tryParse(propToString("pref-addr")) ??
+          HostInfo(_stripTrailingPeriod(h), p);
 
       return NodeInfo(
         name: n,
@@ -393,8 +381,8 @@ class _DrMemState extends State<DrMem> {
           'name': v.name,
           'version': v.version,
           'location': v.location,
-          'host': v.addr.$1,
-          'port': v.addr.$2,
+          'host': v.addr.host,
+          'port': v.addr.port,
           'signature': v.signature,
           'boottime': v.bootTime?.toIso8601String(),
           'queries': v.queries,
@@ -438,7 +426,7 @@ class _DrMemState extends State<DrMem> {
             name: name,
             version: version,
             location: location,
-            addr: (host, port),
+            addr: HostInfo(host, port),
             bootTime: bootTime != null ? DateTime.tryParse(bootTime) : null,
             signature: signature,
             queries: queries,
@@ -451,21 +439,21 @@ class _DrMemState extends State<DrMem> {
   // Helper function to create the GraphQL query URI.
 
   static (Uri, Uri) _buildUris(
-          {required (String, int) host,
+          {required HostInfo addr,
           required String qEnd,
           required String sEnd,
           bool encrypted = false}) =>
       (
         Uri(
           scheme: encrypted ? "https" : "http",
-          host: host.$1,
-          port: host.$2,
+          host: addr.host,
+          port: addr.port,
           path: qEnd,
         ),
         Uri(
           scheme: encrypted ? "wss" : "ws",
-          host: host.$1,
-          port: host.$2,
+          host: addr.host,
+          port: addr.port,
           path: sEnd,
         )
       );
@@ -546,7 +534,7 @@ class _DrMemState extends State<DrMem> {
 
   void _addNode(NodeInfo info) {
     final (qUri, sUri) = _buildUris(
-        host: info.addr, qEnd: info.queries, sEnd: info.subscriptions);
+        addr: info.addr, qEnd: info.queries, sEnd: info.subscriptions);
     final qClient = Client(link: HttpLink(qUri.toString()), cache: Cache());
     final sClient = Client(
         link: WebSocketLink(null,

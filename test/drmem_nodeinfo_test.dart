@@ -9,7 +9,7 @@ void main() {
         name: 'Name',
         version: '1.0',
         location: 'n/a',
-        addr: ('example', 1000),
+        addr: HostInfo('example', 1000),
         bootTime: boot,
         queries: 'q',
         mutations: 'm',

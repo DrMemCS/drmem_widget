@@ -4,7 +4,7 @@ version: 0.1.0
 homepage: https://github.com/DrMemCS
 
 environment:
-  sdk: ^3.1.0
+  sdk: ^3.3.0
   flutter: ^3.16.0
 
 dependencies:
