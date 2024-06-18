@@ -59,28 +59,6 @@ HostInfo? _parseHostInfo(String? s) {
 String _stripTrailingPeriod(String s) =>
     s.endsWith(".") ? s.substring(0, s.length - 1) : s;
 
-// Creates a [Reading] value from a set of values. This fucntion uses a
-// `switch` statement with pattern matching to make sure the parameters
-// specify a correctly formatted, single device value.
-
-Reading _fromParams(
-        DateTime dt, bool? b, int? i, double? d, String? s, List<int>? c) =>
-    Reading(
-        stamp: dt,
-        value: switch ((b, i, d, s, c)) {
-          (_, null, null, null, null) when b != null => DevBool(value: b),
-          (null, _, null, null, null) when i != null => DevInt(value: i),
-          (null, null, _, null, null) when d != null => DevFlt(value: d),
-          (null, null, null, _, null) when s != null => DevStr(value: s),
-          (null, null, null, null, [int r, int g, int b]) =>
-            DevColor(red: r, green: g, blue: b),
-          (null, null, null, null, _) when c != null =>
-            throw (Exception("wrong number of color components")),
-          (null, null, null, null, null) =>
-            throw (Exception("reading has no data")),
-          _ => throw (Exception("reading has multiple value types"))
-        });
-
 // Creates a [DriverInfo] object from a GraphQL [driverInfo] reply value.
 
 DriverInfo _driverInfoFrom(GAllDriversData_driverInfo o) =>
@@ -119,14 +97,14 @@ extension on GGetDeviceData_deviceInfo_history {
     return (oldest != null && newest != null)
         ? DeviceHistory(
             totalPoints: totalPoints,
-            oldest: _fromParams(
+            oldest: Reading.fromParams(
                 oldest.stamp,
                 oldest.boolValue,
                 oldest.intValue,
                 oldest.floatValue,
                 oldest.stringValue,
                 oldest.colorValue?.toList()),
-            newest: _fromParams(
+            newest: Reading.fromParams(
                 newest.stamp,
                 newest.boolValue,
                 newest.intValue,
@@ -143,8 +121,8 @@ extension on GGetDeviceData_deviceInfo_history {
 extension on GSetDeviceData_setDevice {
   // Creates a [Reading] value from a GraphQL [setDevice] reply value.
 
-  Reading toReading() => _fromParams(stamp, boolValue, intValue, floatValue,
-      stringValue, colorValue?.toList());
+  Reading toReading() => Reading.fromParams(stamp, boolValue, intValue,
+      floatValue, stringValue, colorValue?.toList());
 }
 
 extension on Service {
@@ -673,7 +651,7 @@ class _DrMemState extends State<DrMem> {
       OperationResponse<GMonitorDeviceData, GMonitorDeviceVars> response) {
     final data = response.data!.monitorDevice;
 
-    return _fromParams(data.stamp, data.boolValue, data.intValue,
+    return Reading.fromParams(data.stamp, data.boolValue, data.intValue,
         data.floatValue, data.stringValue, data.colorValue?.toList());
   }
 
