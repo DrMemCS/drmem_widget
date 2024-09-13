@@ -3,8 +3,9 @@ library;
 /// Base class for Device-like types. All device-like types have a "name" field.
 sealed class DeviceLike {
   final String name;
+  final String node;
 
-  const DeviceLike({required this.name});
+  const DeviceLike({required this.name, required this.node});
 }
 
 /// Identifies a DrMem device. Since devices are available across multiple
@@ -13,8 +14,6 @@ sealed class DeviceLike {
 /// error, it can choose a default node, or it can prompt the user.
 
 class Device extends DeviceLike {
-  final String? node;
-
   static String _validateName(String name) {
     final regexp = RegExp(r'^\w([-\w]*\w)?(:\w([-\w]*\w)?)*$',
         multiLine: false, unicode: true, caseSensitive: false);
@@ -26,7 +25,19 @@ class Device extends DeviceLike {
     }
   }
 
-  Device({this.node, required String name}) : super(name: _validateName(name));
+  Device({required super.node, required String name})
+      : super(name: _validateName(name));
+
+  /// Define a comparison method. First the names are compared. If they're the
+  /// same, then the nodes are compared.
+
+  int compareTo(Device o) {
+    final result = name.compareTo(o.name);
+
+    return result != 0 ? result : node.compareTo(o.node);
+  }
+
+  DevicePattern toPattern() => DevicePattern(node: node, name: name);
 }
 
 /// Defines a device "pattern" device. In this type, the name field can be
@@ -34,7 +45,5 @@ class Device extends DeviceLike {
 /// this type, the node field cannot be `null`.
 
 class DevicePattern extends DeviceLike {
-  final String node;
-
-  const DevicePattern({required this.node, required super.name});
+  const DevicePattern({required super.node, required super.name});
 }

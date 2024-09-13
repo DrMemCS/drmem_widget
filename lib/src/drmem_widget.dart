@@ -287,8 +287,11 @@ class DrMem extends StatefulWidget {
   /// ([DevInfo]), or an error.
 
   static Future<List<DeviceInfo>> getDeviceInfo(BuildContext context,
-          {required DevicePattern device}) =>
-      _of(context)._getDeviceInfo(device: device);
+          {required DeviceLike device}) =>
+      switch (device) {
+        DevicePattern() => _of(context)._getDeviceInfo(device: device),
+        Device() => _of(context)._getDeviceInfo(device: device.toPattern())
+      };
 
   /// Returns a stream of readings for a device.
   ///
@@ -605,7 +608,7 @@ class _DrMemState extends State<DrMem> {
   // The implmentation of [DrMem.setDevice].
 
   Future<Reading> _setDevice(Device device, DevValue value) => _rpc(
-      _resolve(device).node!,
+      _resolve(device).node,
       GSetDeviceReq((b) => b
         ..vars.device = device.name
         ..vars.value = value.toSettingData()),
@@ -650,7 +653,7 @@ class _DrMemState extends State<DrMem> {
   Stream<Reading> _monitorDevice(Device device,
       {DateTime? startTime, DateTime? endTime}) {
     final dev = _resolve(device);
-    final (_, Client sub) = _getHandles(dev.node!);
+    final (_, Client sub) = _getHandles(dev.node);
 
     return sub
         .request(GMonitorDeviceReq((b) => b
