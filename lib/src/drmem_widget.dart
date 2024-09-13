@@ -28,6 +28,7 @@ import 'schema/__generated__/monitor_device.req.gql.dart';
 import 'schema/__generated__/monitor_device.data.gql.dart';
 import 'schema/__generated__/monitor_device.var.gql.dart';
 
+import 'client_id.dart';
 import 'device_value.dart';
 import 'device_like.dart';
 import 'device_history.dart';
@@ -216,13 +217,13 @@ class DrMem extends StatefulWidget {
   ///
   /// [port] is the port number to use.
   ///
-  /// [qEnd] is the URL path needed to get to the GraphQL query/mutation
-  /// handler.
-  ///
-  /// [sEnd] is the URL path needed to get to the GraphQL subscription handler.
+  /// [clientID] is a unique string to identify an instance of a GraphQL client.
+  /// An application should provide a way to view this value so it can be
+  /// specified in the site's `drmem.toml` file. This value should not be
+  /// available publicly but should only be known to the DrMem targets.
 
-  static void addNode(BuildContext context, NodeInfo info) =>
-      _of(context)._addNode(info);
+  static void addNode(BuildContext context, NodeInfo info, ClientID clientID) =>
+      _of(context)._addNode(info, clientID);
 
   /// Removes a node from the table.
   ///
@@ -463,6 +464,34 @@ class _DrMemState extends State<DrMem> {
         )
       );
 
+  // Creates two `Client` connections that will connect to the specified node.
+  // If an encrypted channel is requested, the client's ID is passed along.
+
+  static (Client, Client) _createConnections(NodeInfo info, ClientID id) {
+    final encrypted = info.signature != null;
+    final (qUri, sUri) = _buildUris(
+        addr: info.addr,
+        qEnd: info.queries,
+        sEnd: info.subscriptions,
+        encrypted: encrypted);
+    final Map<String, String> headers =
+        encrypted ? {'X-DrMem-Client-Id': id.value} : {};
+    final qClient = Client(
+        link: HttpLink(qUri.toString(), defaultHeaders: headers),
+        cache: Cache());
+    final sClient = Client(
+        link: WebSocketLink(null,
+            channelGenerator: () => IOWebSocketChannel.connect(sUri,
+                protocols: ["graphql-ws"],
+                headers: headers,
+                connectTimeout: const Duration(seconds: 1),
+                pingInterval: const Duration(seconds: 10)),
+            reconnectInterval: const Duration(seconds: 2)),
+        cache: Cache());
+
+    return (qClient, sClient);
+  }
+
   // Validates a device value by adding a default node, if the node was null,
   // or verifying the node exists if it isn't null.
 
@@ -537,16 +566,8 @@ class _DrMemState extends State<DrMem> {
 
   // The implementation of [DrMem.addNode].
 
-  void _addNode(NodeInfo info) {
-    final (qUri, sUri) = _buildUris(
-        addr: info.addr, qEnd: info.queries, sEnd: info.subscriptions);
-    final qClient = Client(link: HttpLink(qUri.toString()), cache: Cache());
-    final sClient = Client(
-        link: WebSocketLink(null,
-            channelGenerator: () =>
-                WebSocketChannel.connect(sUri, protocols: ["graphql-ws"]),
-            reconnectInterval: const Duration(seconds: 1)),
-        cache: Cache());
+  void _addNode(NodeInfo info, ClientID clientId) {
+    final conns = _createConnections(info, clientId);
 
     setState(() => _nodes[info.name] = (info, qClient, sClient));
   }
