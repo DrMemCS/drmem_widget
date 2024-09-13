@@ -192,7 +192,7 @@ class DrMem extends StatefulWidget {
       context.findAncestorStateOfType<_DrMemState>()!;
 
   /// Returns a snapshot of the current node table. This should only be used
-  /// to grab the state in order to save it to persistent storgae, for instance.
+  /// to grab the state in order to save it to persistent storage, for instance.
 
   List<Map<String, dynamic>> getNodeTableState(BuildContext context) =>
       context.findAncestorStateOfType<_DrMemState>()!.nodeTable;
@@ -260,7 +260,7 @@ class DrMem extends StatefulWidget {
   /// Retrieves driver information from a DrMem node.
   ///
   /// Each instance of DrMem interacts with it own set of hardware devices and,
-  /// therefore, is built with a custom set of drviers. This function queries
+  /// therefore, is built with a custom set of drivers. This function queries
   /// the node for available information on its set of drivers.
   ///
   /// [context] is the context of the widget making the request.

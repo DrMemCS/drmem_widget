@@ -53,7 +53,7 @@ class NodeInfo {
   /// file.
   String location;
 
-  /// An IP adress / host name along with a port number with which to use to
+  /// An IP address / host name along with a port number with which to use to
   /// connect.
   HostInfo addr;
 

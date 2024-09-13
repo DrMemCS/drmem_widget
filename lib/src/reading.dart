@@ -17,7 +17,7 @@ class Reading {
 
   const Reading({required this.stamp, required this.value});
 
-  // Creates a [Reading] value from a set of values. This fucntion uses a
+  // Creates a [Reading] value from a set of values. This function uses a
   // `switch` statement with pattern matching to make sure the parameters
   // specify a correctly formatted, single device value.
 
