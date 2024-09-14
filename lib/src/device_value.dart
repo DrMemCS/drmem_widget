@@ -22,6 +22,12 @@ class DevBool extends DevValue {
   final bool value;
 
   const DevBool({required this.value});
+
+  int compareTo(DevBool o) => switch ((value, o.value)) {
+        (false, false) || (true, true) => 0,
+        (false, true) => -1,
+        (true, false) => 1
+      };
 }
 
 /// Holds integer value.
@@ -29,6 +35,8 @@ class DevInt extends DevValue {
   final int value;
 
   const DevInt({required this.value});
+
+  int compareTo(DevInt o) => value.compareTo(o.value);
 }
 
 /// Holds floating point values.
@@ -36,6 +44,8 @@ class DevFlt extends DevValue {
   final double value;
 
   const DevFlt({required this.value});
+
+  int compareTo(DevFlt o) => value.compareTo(o.value);
 }
 
 /// Holds text values.
@@ -43,6 +53,8 @@ class DevStr extends DevValue {
   final String value;
 
   const DevStr({required this.value});
+
+  int compareTo(DevStr o) => value.compareTo(o.value);
 }
 
 /// Holds RGB color values.
@@ -61,4 +73,22 @@ class DevColor extends DevValue {
         green = min(255, max(0, green)),
         blue = min(255, max(0, blue)),
         alpha = min(255, max(0, alpha));
+
+  int compareTo(DevColor o) {
+    final dRed = red.compareTo(o.red);
+
+    if (dRed == 0) {
+      final dGreen = green.compareTo(o.green);
+
+      if (dGreen == 0) {
+        final dBlue = blue.compareTo(o.blue);
+
+        return dBlue == 0 ? alpha.compareTo(o.alpha) : dBlue;
+      } else {
+        return dGreen;
+      }
+    } else {
+      return dRed;
+    }
+  }
 }
