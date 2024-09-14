@@ -139,7 +139,8 @@ extension on Service {
         addr: addr,
         location: _propToString("location") ?? "unknown",
         version: _propToString("version") ?? "0.0.0",
-        bootTime: DateTime.tryParse(_propToString("bootTime") ?? ""),
+        bootTime:
+            boottime != null ? DateTime.tryParse(boottime) : DateTime.now(),
         signature: _propToString("signature"),
         queries: _propToString("queries") ?? "/drmem/q",
         mutations: _propToString("mutations") ?? "/drmem/q",
