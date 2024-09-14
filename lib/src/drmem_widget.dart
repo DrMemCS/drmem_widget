@@ -8,10 +8,11 @@
 
 library drmem_widget;
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:gql_websocket_link/gql_websocket_link.dart';
 import 'package:gql_http_link/gql_http_link.dart';
 import 'package:ferry/ferry.dart';
@@ -39,7 +40,7 @@ import 'device_info.dart';
 
 import 'dart:developer' as dev;
 
-typedef _NodeValue = (NodeInfo, Client, Client);
+typedef _NodeValue = (Client, Client);
 typedef _NodeMap = Map<String, _NodeValue>;
 
 // Removes a trailing period. Under OSX, a local hostname is given as
@@ -148,30 +149,6 @@ extension on Service {
       return null;
     }
   }
-}
-
-// This widget implements an inherited model. Each time it's built, it gets a
-// snapshot of the known nodes. Widgets that register with it will get rebuilt
-// when the associated value changes.
-
-class _DrMemModel extends InheritedModel<String> {
-  final Map<String, NodeInfo> nodes;
-
-  const _DrMemModel(this.nodes, {required super.child});
-
-  @override
-  bool updateShouldNotify(_DrMemModel oldWidget) =>
-      !mapEquals(nodes, oldWidget.nodes);
-
-  @override
-  bool updateShouldNotifyDependent(_DrMemModel oldWidget, Set<String> deps) =>
-      deps.any((e) => nodes[e] != oldWidget.nodes[e]);
-
-  // Allows a client to handle the case where this model may not be in the
-  // widget tree.
-
-  static _DrMemModel _of(BuildContext context, {String? aspect}) =>
-      InheritedModel.inheritFrom<_DrMemModel>(context, aspect: aspect)!;
 }
 
 /// The [DrMem] widget implements a "provider" widget for an application's
@@ -322,19 +299,6 @@ class DrMem extends StatefulWidget {
           {DateTime? startTime, DateTime? endTime}) =>
       _of(context)
           ._monitorDevice(device, startTime: startTime, endTime: endTime);
-
-  /// Retrieves node information and registers the calling widget to be rebuilt
-  /// if its node of interest gets updated.
-
-  static NodeInfo? getNodeInfo(
-          {required BuildContext context, required String node}) =>
-      _DrMemModel._of(context, aspect: node).nodes[node];
-
-  /// Retrieves all the known node names. The calling widget is registered to
-  /// be rebuilt if any part of the model changes.
-
-  static Iterable<String> getNodeNames({required BuildContext context}) =>
-      _DrMemModel._of(context).nodes.keys;
 }
 
 class _DrMemState extends State<DrMem> {
@@ -371,78 +335,14 @@ class _DrMemState extends State<DrMem> {
 
     // Close the connections to DrMem.
 
-    for (final MapEntry(value: (_, a, b)) in _nodes.entries) {
+    for (final MapEntry(value: (a, b)) in _nodes.entries) {
       a.dispose();
       b.dispose();
     }
     super.dispose();
   }
 
-  // Returns an unmodifiable version of the node table.
-
-  List<Map<String, dynamic>> get nodeTable => _nodes.entries.map((entry) {
-        final (v, _, _) = entry.value;
-
-        return <String, dynamic>{
-          'name': v.name,
-          'version': v.version,
-          'location': v.location,
-          'host': v.addr.host,
-          'port': v.addr.port,
-          'signature': v.signature,
-          'boottime': v.bootTime?.toIso8601String(),
-          'queries': v.queries,
-          'mutations': v.mutations,
-          'subscriptions': v.subscriptions
-        };
-      }).toList();
-
-  // Sets the contents of the node table to [map]. Any entries in [map] that
-  // don't follow the format for the node table will be ignored.
-
-  set nodeTable(List<Map<String, dynamic>> l) {
-    // Remove the old nodes, one by one. It needs to be done this way because
-    // `_removeNode` will notifiy widgets that their node has been updated.
-    // Doing a `_nodes.clear()` wouldn't notify them.
-
-    final oldNodes = _nodes.keys.toList();
-
-    for (final node in oldNodes) {
-      _removeNode(node);
-    }
-
-    // Now populate the empty node table with entries from the parameter.
-    // Ignore any entries that don't have the proper keys or values.
-
-    for (final ii in l) {
-      if (ii
-          case {
-            'name': String name,
-            'version': String version,
-            'location': String location,
-            'host': String host,
-            'port': int port,
-            'signature': String? signature,
-            'boottime': String? bootTime,
-            'queries': String queries,
-            'mutations': String mutations,
-            'subscriptions': String subscriptions
-          }) {
-        _addNode(NodeInfo(
-            name: name,
-            version: version,
-            location: location,
-            addr: HostInfo(host, port),
-            bootTime: bootTime != null ? DateTime.tryParse(bootTime) : null,
-            signature: signature,
-            queries: queries,
-            mutations: mutations,
-            subscriptions: subscriptions));
-      }
-    }
-  }
-
-  // Helper function to create the GraphQL query URI.
+  // Helper function to create the GraphQL query URIs.
 
   static (Uri, Uri) _buildUris(
           {required HostInfo addr,
@@ -685,7 +585,5 @@ class _DrMemState extends State<DrMem> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      _DrMemModel(_nodes.map((key, value) => MapEntry(key, value.$1)),
-          child: widget.child);
+  Widget build(BuildContext context) => widget.child;
 }
