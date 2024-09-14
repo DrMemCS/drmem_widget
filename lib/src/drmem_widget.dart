@@ -513,8 +513,12 @@ class _DrMemState extends State<DrMem> {
   // This is the implementation of [DrMem.getDeviceInfo].
 
   Future<List<DeviceInfo>> _getDeviceInfo({required DevicePattern device}) =>
-      _rpc(device.node, GGetDeviceReq((b) => b..vars.name = device.name),
-          _toDevInfoList);
+      _rpc(
+          device.node,
+          GGetDeviceReq((b) => b
+            ..fetchPolicy = FetchPolicy.NetworkOnly
+            ..vars.name = device.name),
+          _toDevInfoList(device.node));
 
   // Returns an appropriate GDateRangeBuilder based on the two input dates.
   // In DrMem's GraphQL API, if both dates are `null`, we don't provide a
@@ -545,6 +549,7 @@ class _DrMemState extends State<DrMem> {
 
     return sub
         .request(GMonitorDeviceReq((b) => b
+          ..fetchPolicy = FetchPolicy.NetworkOnly
           ..vars.device = device.name
           ..vars.range = _buildDateRange(startTime, endTime)))
         .where((response) => !response.loading && response.data != null)
