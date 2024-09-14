@@ -36,9 +36,9 @@ class Reading {
             (null, null, null, null, [int r, int g, int b, int a]) =>
               DevColor(red: r, green: g, blue: b, alpha: a),
             (null, null, null, null, _) when c != null =>
-              throw (Exception("wrong number of color components")),
+              throw (ArgumentError("wrong number of color components", "c")),
             (null, null, null, null, null) =>
-              throw (Exception("reading has no data")),
-            _ => throw (Exception("reading has multiple value types"))
+              throw (ArgumentError("reading has no data")),
+            _ => throw (ArgumentError("reading has multiple value types"))
           });
 }
