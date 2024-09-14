@@ -131,8 +131,8 @@ extension on Service {
 
   NodeInfo? toNodeInfo() {
     if (this case Service(name: String n, host: String h, port: int p)) {
-      final addr = HostInfo.tryParse(_propToString("pref-addr")) ??
-          HostInfo(_stripTrailingPeriod(h), p);
+
+      dev.log("boot time: $boottime", name: "Service::toNodeInfo()");
 
       return NodeInfo(
         name: n,
@@ -147,6 +147,7 @@ extension on Service {
         subscriptions: _propToString("subscriptions") ?? "/drmem/s",
       );
     } else {
+      dev.log("couldn't convert $this to NodeInfo");
       return null;
     }
   }
