@@ -2,7 +2,7 @@ import "package:drmem_provider/drmem_provider.dart";
 import "package:flutter_test/flutter_test.dart";
 
 void main() {
-  test("... Device", () {
+  test("... Device construction", () {
     expect(() => Device(name: "a", node: "host"), returnsNormally);
     expect(() => Device(name: "ab", node: "host"), returnsNormally);
     expect(() => Device(name: "a:b", node: "host"), returnsNormally);
@@ -13,6 +13,7 @@ void main() {
     expect(() => Device(name: "0:1:2", node: "host"), returnsNormally);
     expect(() => Device(name: "a-b", node: "host"), returnsNormally);
 
+    expect(() => Device(name: "", node: "host"), throwsA(isArgumentError));
     expect(() => Device(name: ".", node: "host"), throwsA(isArgumentError));
     expect(() => Device(name: ":", node: "host"), throwsA(isArgumentError));
     expect(() => Device(name: ":a", node: "host"), throwsA(isArgumentError));
