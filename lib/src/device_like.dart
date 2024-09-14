@@ -15,8 +15,7 @@ sealed class DeviceLike {
 
 class Device extends DeviceLike {
   static String _validateName(String name) {
-    final regexp = RegExp(r'^\w([-\w]*\w)?(:\w([-\w]*\w)?)*$',
-        multiLine: false, unicode: true, caseSensitive: false);
+    final regexp = RegExp(r'^\w([-\w]*\w)?(:\w([-\w]*\w)?)*$', unicode: true);
 
     if (regexp.hasMatch(name)) {
       return name;
