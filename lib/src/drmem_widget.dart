@@ -160,6 +160,17 @@ extension on Service {
 class DrMem extends StatefulWidget {
   final Widget child;
 
+  /// Creates an instance of the [DrMem] widget.
+  ///
+  /// This widget provides methods to communicate with a DrMem node. Some of
+  /// these connections are long-lived (receiving device values, for instance)
+  /// so this widget should be placed near the top of the widget tree to
+  /// prevent it from tearing down and rebuilding the connections.
+  ///
+  /// [key] is an optional key to be associated with the widget
+  ///
+  /// [child] is the widget subtree under this widget.
+
   const DrMem({required this.child, super.key});
 
   @override
@@ -170,30 +181,23 @@ class DrMem extends StatefulWidget {
   static _DrMemState _of(BuildContext context) =>
       context.findAncestorStateOfType<_DrMemState>()!;
 
-  /// Returns a snapshot of the current node table. This should only be used
-  /// to grab the state in order to save it to persistent storage, for instance.
+  /// Returns a future that resolves to a stream that returns NodeInfo objects
+  /// for DrMem nodes that are announcing themselves on the local network. The
+  /// future only blocks early in the application's lifetime, when the mDNS
+  /// service is initializing. Once that is done, the Future resolves
+  /// immediately.
+  ///
+  /// [context] is the context of the widget making the request.
 
-  List<Map<String, dynamic>> getNodeTableState(BuildContext context) =>
-      context.findAncestorStateOfType<_DrMemState>()!.nodeTable;
+  static Future<Stream<NodeInfo>> mdnsSubscribe(BuildContext context) async =>
+      _of(context)._mdnsSubscribe();
 
-  /// Use this property to reset the table into a previous state. All current
-  /// information will be lost and replaced. The map should be compatible with
-  /// the map returned by [getNodeTableState]. Any portion of [state] that
-  /// can't be used to restore a nodetbale entry will be ignored.
-
-  setNodeTableState(BuildContext context, List<Map<String, dynamic>> state) =>
-      context.findAncestorStateOfType<_DrMemState>()!.nodeTable = state;
-
-  /// Adds a new node to the table of known DrMem nodes. When this completes,
-  /// the application can interact with the node using the rest of the API.
+  /// Adds a mapping of a node to its network connections. The `NodeInfo` type
+  /// provides information on how the connections should be made.
   ///
   /// [context] is the context of the widget making the request.
   ///
-  /// [name] is the name of the node. All DrMem nodes should have unique names.
-  ///
-  /// [host] is the IP address of the host.
-  ///
-  /// [port] is the port number to use.
+  /// [info] specifies the information of the node to be added.
   ///
   /// [clientID] is a unique string to identify an instance of a GraphQL client.
   /// An application should provide a way to view this value so it can be
@@ -303,36 +307,24 @@ class DrMem extends StatefulWidget {
 }
 
 class _DrMemState extends State<DrMem> {
-  Discovery? _disc;
+  late Future<Discovery> _disc;
   final _NodeMap _nodes = {};
 
   @override
   void initState() {
-    dev.log("starting mDNS monitor", name: "mdns.announce");
-    startDiscovery('_drmem._tcp').then((value) {
-      _disc = value;
-      value.addServiceListener(_serviceUpdate);
-      dev.log("registered with mDNS", name: "mdns.announce");
-    });
     super.initState();
+    dev.log("starting mDNS monitor", name: "mdns.announce");
+    _disc = startDiscovery('_drmem._tcp');
   }
 
   @override
   void dispose() {
-    final tmp = _disc;
+    Future.microtask(() async {
+      final tmp = await _disc;
 
-    // Shut down the background thread asynchronously.
-
-    if (tmp != null) {
-      // Unregister synchronously.
-
-      tmp.removeServiceListener(_serviceUpdate);
-      dev.log("unregistered from mDNS", name: "mDNS");
-      Future.microtask(() async {
-        await stopDiscovery(tmp);
-        dev.log("stopped mDNS monitor", name: "mDNS");
-      });
-    }
+      await stopDiscovery(tmp);
+      dev.log("stopped mDNS monitor", name: "mDNS");
+    });
 
     // Close the connections to DrMem.
 
@@ -376,7 +368,7 @@ class _DrMemState extends State<DrMem> {
         sEnd: info.subscriptions,
         encrypted: encrypted);
     final Map<String, String> headers =
-        encrypted ? {'X-DrMem-Client-Id': id.value} : {};
+        encrypted ? {'X-DrMem-Client-Id': id.fingerprint} : {};
     final qClient = Client(
         link: HttpLink(qUri.toString(), defaultHeaders: headers),
         cache: Cache());
@@ -397,72 +389,44 @@ class _DrMemState extends State<DrMem> {
   // or verifying the node exists if it isn't null.
 
   Device _resolve(Device dev) {
-    if (dev case Device(node: String node)) {
-      if (_nodes.containsKey(node)) {
-        return dev;
-      } else {
-        throw Exception("device on unknown node, '$node'");
-      }
-    } else if (_nodes.length == 1) {
-      return Device(node: _nodes.keys.first, name: dev.name);
+    if (_nodes.containsKey(dev.node)) {
+      return dev;
     } else {
-      throw Exception("device needs a node specified");
+      throw Exception("device on unknown node, '${dev.node}'");
     }
   }
 
-  // Handles all incoming mDNS announcements.
+  Future<Stream<NodeInfo>> _mdnsSubscribe() async {
+    final mdns = await _disc;
+    final StreamController<NodeInfo> ctrl = StreamController();
 
-  void _serviceUpdate(Service service, ServiceStatus status) {
-    // If no name is given, the announcement is worthless.
+    void serviceListener(Service service, ServiceStatus status) {
+      if (service.name == null) {
+        dev.log("mDNS announcement is missing service name ... ignoring",
+            name: "mDNS");
+        return;
+      }
 
-    if (service.name == null) {
-      dev.log("mDNS announcement is missing service name ... ignoring",
-          name: "mDNS");
-      return;
-    }
-
-    // If this is a `found` announcement, we need to add it to the model.
-
-    if (status == ServiceStatus.found) {
       final ni = service.toNodeInfo();
 
-      // If `ni` isn't null, then we have an address to communicate with.
-      // If no address was found, we can't talk to it, so we ignore the
-      // announcement.
-
-      if (ni != null) {
-        // If the node isn't in the map or it is and we can merge the data
-        // with what's in the map, then update the entry.
-
-        if (_nodes[ni.name] case (NodeInfo info, Client q, Client s)) {
-          if (info.canUpdate(ni)) {
-            setState(() => _nodes[ni.name] = (ni, q, s));
-            dev.log("updated node ${ni.name}", name: "mDNS");
-          } else {
-            dev.log(
-                "node ${ni.name} announced but can't be merged ... ignoring",
-                name: "mDNS");
-          }
-        } else {
-          _addNode(ni);
-          dev.log("added new node ${ni.name}", name: "mDNS");
-        }
-      } else {
-        dev.log(
-            "node ${service.name} doesn't have a valid address ... ignoring",
-            name: "mDNS");
+      if (ni != null && status == ServiceStatus.found) {
+        ctrl.add(ni);
+        dev.log("announced node ${ni.name}", name: "mDNS");
       }
     }
 
-    // This is a `lost` announcement. Deactivate the node (it'll appear in the
-    // list but won't appear active.)
+    ctrl.onResume = ctrl.onListen = () {
+      mdns.addServiceListener(serviceListener);
+      dev.log("listening to mdns stream", name: "mDNS");
+    };
 
-    else {
-      setState(() {
-        _nodes[service.name]?.$1.deactivate();
-        dev.log("deactivate node ${service.name}", name: "mDNS");
-      });
-    }
+    ctrl.onPause = ctrl.onCancel = () {
+      mdns.removeServiceListener(serviceListener);
+      dev.log("ignoring mdns stream", name: "mDNS");
+    };
+
+    mdns.addServiceListener(serviceListener);
+    return ctrl.stream;
   }
 
   // The implementation of [DrMem.addNode].
@@ -470,7 +434,7 @@ class _DrMemState extends State<DrMem> {
   void _addNode(NodeInfo info, ClientID clientId) {
     final conns = _createConnections(info, clientId);
 
-    setState(() => _nodes[info.name] = (info, qClient, sClient));
+    setState(() => _nodes[info.name] = conns);
   }
 
   // The implementation of [DrMem.removeNode].
@@ -479,19 +443,21 @@ class _DrMemState extends State<DrMem> {
 
   // Translates the response of a [getDeviceInfo] query into a `List<DevInfo>`.
 
-  List<DeviceInfo> _toDevInfoList(GGetDeviceData result) => result.deviceInfo
-      .map((e) => DeviceInfo(
-            Device(name: e.deviceName),
-            e.settable,
-            e.units,
-            e.history.toDeviceHistory(),
-          ))
-      .toList();
+  List<DeviceInfo> Function(GGetDeviceData) _toDevInfoList(String node) =>
+      (result) => result.deviceInfo
+          .map((e) => DeviceInfo(
+                Device(name: e.deviceName, node: node),
+                e.settable,
+                e.units,
+                e.history.toDeviceHistory(),
+              ))
+          .toList()
+        ..sort((DeviceInfo a, DeviceInfo b) => a.device.compareTo(b.device));
 
   // Gets the two GraphQL handles associated with the specified node.
 
   (Client, Client) _getHandles(String node) {
-    if (_nodes[node] case (_, Client q, Client s)) {
+    if (_nodes[node] case (Client q, Client s)) {
       return (q, s);
     } else {
       throw ArgumentError("node '$node' not found");
@@ -527,7 +493,7 @@ class _DrMemState extends State<DrMem> {
     });
   }
 
-  // The implmentation of [DrMem.setDevice].
+  // The implementation of [DrMem.setDevice].
 
   Future<Reading> _setDevice(Device device, DevValue value) => _rpc(
       _resolve(device).node,
