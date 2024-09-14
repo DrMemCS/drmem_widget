@@ -507,7 +507,8 @@ class _DrMemState extends State<DrMem> {
   Future<List<DriverInfo>> _getDriverInfo(String node) => _rpc(
         node,
         GAllDriversReq((b) => b),
-        (result) => result.driverInfo.map(_driverInfoFrom).toList(),
+        (result) => result.driverInfo.map(_driverInfoFrom).toList()
+          ..sort((DriverInfo a, DriverInfo b) => a.name.compareTo(b.name)),
       );
 
   // This is the implementation of [DrMem.getDeviceInfo].
