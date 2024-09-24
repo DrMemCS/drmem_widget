@@ -429,8 +429,6 @@ class _DrMemState extends State<DrMem> {
       mdns.removeServiceListener(serviceListener);
       dev.log("ignoring mdns stream", name: "mDNS");
     };
-
-    mdns.addServiceListener(serviceListener);
     return ctrl.stream;
   }
 
