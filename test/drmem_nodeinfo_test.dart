@@ -22,7 +22,6 @@ void main() {
       'version': '1.0',
       'location': 'n/a',
       'addr': {'host': 'example', 'port': 1000},
-      'bootTime': boot.toIso8601String(),
       'queries': 'q',
       'mutations': 'm',
       'subscriptions': 's'
@@ -31,6 +30,13 @@ void main() {
     // Did it encode correctly?
 
     expect(json, equals(tmp));
+
+    // When decoding, we always set the boot time to `null`. A `null` boot time
+    // means the node is not active on the local network. Pulling node info
+    // from persistent store will have a `null` boot time and receiving an
+    // mDNS announcement will have a valid boot time.
+
+    ni.bootTime = null;
 
     // Can we decode it back to the original?
 
