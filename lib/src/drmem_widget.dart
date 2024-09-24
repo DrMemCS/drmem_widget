@@ -435,14 +435,14 @@ class _DrMemState extends State<DrMem> {
   // The implementation of [DrMem.addNode].
 
   void _addNode(NodeInfo info, ClientID clientId) {
-    final conns = _createConnections(info, clientId);
-
-    setState(() => _nodes[info.name] = conns);
+    if (!_nodes.containsKey(info.name)) {
+      _nodes[info.name] = _createConnections(info, clientId);
+    }
   }
 
   // The implementation of [DrMem.removeNode].
 
-  void _removeNode(String name) => setState(() => _nodes.remove(name));
+  void _removeNode(String name) => _nodes.remove(name);
 
   // Translates the response of a [getDeviceInfo] query into a `List<DevInfo>`.
 
