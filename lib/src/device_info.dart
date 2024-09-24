@@ -1,11 +1,13 @@
 library;
 
+import "package:flutter/foundation.dart";
 import "device_like.dart";
 import "device_history.dart";
 
 /// The result type for the [DrMem.getDeviceInfo] query. Provides
 /// meta-information about a DrMem device.
 
+@immutable
 class DeviceInfo {
   /// Full name and location of device.
   final Device device;

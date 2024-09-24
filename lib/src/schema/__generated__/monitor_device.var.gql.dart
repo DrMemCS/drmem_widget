@@ -15,17 +15,20 @@ abstract class GMonitorDeviceVars
     implements Built<GMonitorDeviceVars, GMonitorDeviceVarsBuilder> {
   GMonitorDeviceVars._();
 
-  factory GMonitorDeviceVars([Function(GMonitorDeviceVarsBuilder b) updates]) =
+  factory GMonitorDeviceVars(
+          [void Function(GMonitorDeviceVarsBuilder b) updates]) =
       _$GMonitorDeviceVars;
 
   String get device;
   _i1.GDateRange? get range;
   static Serializer<GMonitorDeviceVars> get serializer =>
       _$gMonitorDeviceVarsSerializer;
+
   Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
         GMonitorDeviceVars.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GMonitorDeviceVars? fromJson(Map<String, dynamic> json) =>
       _i2.serializers.deserializeWith(
         GMonitorDeviceVars.serializer,

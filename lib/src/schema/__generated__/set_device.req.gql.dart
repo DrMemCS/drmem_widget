@@ -23,7 +23,7 @@ abstract class GSetDeviceReq
         _i1.OperationRequest<_i2.GSetDeviceData, _i3.GSetDeviceVars> {
   GSetDeviceReq._();
 
-  factory GSetDeviceReq([Function(GSetDeviceReqBuilder b) updates]) =
+  factory GSetDeviceReq([void Function(GSetDeviceReqBuilder b) updates]) =
       _$GSetDeviceReq;
 
   static void _initializeBuilder(GSetDeviceReqBuilder b) => b
@@ -32,6 +32,7 @@ abstract class GSetDeviceReq
       operationName: 'SetDevice',
     )
     ..executeOnListen = true;
+
   @override
   _i3.GSetDeviceVars get vars;
   @override
@@ -40,7 +41,9 @@ abstract class GSetDeviceReq
   _i4.Request get execRequest => _i4.Request(
         operation: operation,
         variables: vars.toJson(),
+        context: context ?? const _i4.Context(),
       );
+
   @override
   String? get requestId;
   @override
@@ -60,13 +63,30 @@ abstract class GSetDeviceReq
   @override
   bool get executeOnListen;
   @override
+  @BuiltValueField(serialize: false)
+  _i4.Context? get context;
+  @override
   _i2.GSetDeviceData? parseData(Map<String, dynamic> json) =>
       _i2.GSetDeviceData.fromJson(json);
+
+  @override
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  @override
+  Map<String, dynamic> dataToJson(_i2.GSetDeviceData data) => data.toJson();
+
+  @override
+  _i1.OperationRequest<_i2.GSetDeviceData, _i3.GSetDeviceVars>
+      transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
+          this.rebuild((b) => b..operation = transform(operation));
+
   static Serializer<GSetDeviceReq> get serializer => _$gSetDeviceReqSerializer;
+
   Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
         GSetDeviceReq.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GSetDeviceReq? fromJson(Map<String, dynamic> json) =>
       _i6.serializers.deserializeWith(
         GSetDeviceReq.serializer,

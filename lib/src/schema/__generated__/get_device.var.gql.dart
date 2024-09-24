@@ -13,16 +13,18 @@ abstract class GGetDeviceVars
     implements Built<GGetDeviceVars, GGetDeviceVarsBuilder> {
   GGetDeviceVars._();
 
-  factory GGetDeviceVars([Function(GGetDeviceVarsBuilder b) updates]) =
+  factory GGetDeviceVars([void Function(GGetDeviceVarsBuilder b) updates]) =
       _$GGetDeviceVars;
 
   String get name;
   static Serializer<GGetDeviceVars> get serializer =>
       _$gGetDeviceVarsSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GGetDeviceVars.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetDeviceVars? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GGetDeviceVars.serializer,

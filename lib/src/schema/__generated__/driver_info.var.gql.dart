@@ -13,15 +13,17 @@ abstract class GAllDriversVars
     implements Built<GAllDriversVars, GAllDriversVarsBuilder> {
   GAllDriversVars._();
 
-  factory GAllDriversVars([Function(GAllDriversVarsBuilder b) updates]) =
+  factory GAllDriversVars([void Function(GAllDriversVarsBuilder b) updates]) =
       _$GAllDriversVars;
 
   static Serializer<GAllDriversVars> get serializer =>
       _$gAllDriversVarsSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GAllDriversVars.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GAllDriversVars? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GAllDriversVars.serializer,

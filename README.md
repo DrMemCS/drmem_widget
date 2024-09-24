@@ -38,6 +38,13 @@ const like = 'sample';
 
 ## Additional information
 
+Before the project can be built -- and any time the GraphQL API changes -- the
+GraphQL files need to be processed. This can be done with the command:
+
+```shell
+$ dart run build_runner build --delete-conflicting-outputs
+```
+
 The author uses this widget on MacOS and Android targets. It should also work on
 Linux, IOS, and Windows, but he doesn't have systems to test them on. The mDNS
 dependent package doesn't support Web targets, so this package can't either.

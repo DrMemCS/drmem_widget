@@ -1,11 +1,14 @@
 library;
 
+import "package:flutter/foundation.dart";
 import "reading.dart";
 
-/// Represents the history associated with a device. This is a snapshot of the
-/// history, at the time of the query. There's no guarantee how long this
-/// information will remain accurate.
+/// Represents the history associated with a device.
+///
+/// This is a snapshot of the history, at the time of the query. There's no
+/// guarantee how long this information will remain accurate.
 
+@immutable
 class DeviceHistory {
   /// Indicates how many data points were in the device's history at the time
   /// of the query.
@@ -20,5 +23,6 @@ class DeviceHistory {
   /// after this query returns, a newer point gets added to the history.
   final Reading newest;
 
-  const DeviceHistory(this.totalPoints, this.oldest, this.newest);
+  const DeviceHistory(
+      {required this.totalPoints, required this.oldest, required this.newest});
 }

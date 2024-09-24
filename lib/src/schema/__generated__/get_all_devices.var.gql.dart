@@ -13,15 +13,18 @@ abstract class GGetAllDevicesVars
     implements Built<GGetAllDevicesVars, GGetAllDevicesVarsBuilder> {
   GGetAllDevicesVars._();
 
-  factory GGetAllDevicesVars([Function(GGetAllDevicesVarsBuilder b) updates]) =
+  factory GGetAllDevicesVars(
+          [void Function(GGetAllDevicesVarsBuilder b) updates]) =
       _$GGetAllDevicesVars;
 
   static Serializer<GGetAllDevicesVars> get serializer =>
       _$gGetAllDevicesVarsSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GGetAllDevicesVars.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetAllDevicesVars? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GGetAllDevicesVars.serializer,

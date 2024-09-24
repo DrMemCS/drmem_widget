@@ -14,20 +14,24 @@ abstract class GMonitorDeviceData
     implements Built<GMonitorDeviceData, GMonitorDeviceDataBuilder> {
   GMonitorDeviceData._();
 
-  factory GMonitorDeviceData([Function(GMonitorDeviceDataBuilder b) updates]) =
+  factory GMonitorDeviceData(
+          [void Function(GMonitorDeviceDataBuilder b) updates]) =
       _$GMonitorDeviceData;
 
   static void _initializeBuilder(GMonitorDeviceDataBuilder b) =>
       b..G__typename = 'Subscription';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   GMonitorDeviceData_monitorDevice get monitorDevice;
   static Serializer<GMonitorDeviceData> get serializer =>
       _$gMonitorDeviceDataSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GMonitorDeviceData.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GMonitorDeviceData? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GMonitorDeviceData.serializer,
@@ -42,11 +46,12 @@ abstract class GMonitorDeviceData_monitorDevice
   GMonitorDeviceData_monitorDevice._();
 
   factory GMonitorDeviceData_monitorDevice(
-          [Function(GMonitorDeviceData_monitorDeviceBuilder b) updates]) =
+          [void Function(GMonitorDeviceData_monitorDeviceBuilder b) updates]) =
       _$GMonitorDeviceData_monitorDevice;
 
   static void _initializeBuilder(GMonitorDeviceData_monitorDeviceBuilder b) =>
       b..G__typename = 'Reading';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   DateTime get stamp;
@@ -57,10 +62,12 @@ abstract class GMonitorDeviceData_monitorDevice
   BuiltList<int>? get colorValue;
   static Serializer<GMonitorDeviceData_monitorDevice> get serializer =>
       _$gMonitorDeviceDataMonitorDeviceSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GMonitorDeviceData_monitorDevice.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GMonitorDeviceData_monitorDevice? fromJson(
           Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(

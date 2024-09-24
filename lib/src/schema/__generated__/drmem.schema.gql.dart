@@ -14,7 +14,7 @@ abstract class GSettingData
     implements Built<GSettingData, GSettingDataBuilder> {
   GSettingData._();
 
-  factory GSettingData([Function(GSettingDataBuilder b) updates]) =
+  factory GSettingData([void Function(GSettingDataBuilder b) updates]) =
       _$GSettingData;
 
   @BuiltValueField(wireName: 'int')
@@ -25,10 +25,12 @@ abstract class GSettingData
   String? get str;
   BuiltList<int>? get color;
   static Serializer<GSettingData> get serializer => _$gSettingDataSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GSettingData.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GSettingData? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GSettingData.serializer,
@@ -39,15 +41,18 @@ abstract class GSettingData
 abstract class GDateRange implements Built<GDateRange, GDateRangeBuilder> {
   GDateRange._();
 
-  factory GDateRange([Function(GDateRangeBuilder b) updates]) = _$GDateRange;
+  factory GDateRange([void Function(GDateRangeBuilder b) updates]) =
+      _$GDateRange;
 
   DateTime? get start;
   DateTime? get end;
   static Serializer<GDateRange> get serializer => _$gDateRangeSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GDateRange.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GDateRange? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GDateRange.serializer,

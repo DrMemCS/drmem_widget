@@ -14,20 +14,23 @@ abstract class GSetDeviceData
     implements Built<GSetDeviceData, GSetDeviceDataBuilder> {
   GSetDeviceData._();
 
-  factory GSetDeviceData([Function(GSetDeviceDataBuilder b) updates]) =
+  factory GSetDeviceData([void Function(GSetDeviceDataBuilder b) updates]) =
       _$GSetDeviceData;
 
   static void _initializeBuilder(GSetDeviceDataBuilder b) =>
       b..G__typename = 'Control';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   GSetDeviceData_setDevice get setDevice;
   static Serializer<GSetDeviceData> get serializer =>
       _$gSetDeviceDataSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GSetDeviceData.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GSetDeviceData? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GSetDeviceData.serializer,
@@ -41,11 +44,12 @@ abstract class GSetDeviceData_setDevice
   GSetDeviceData_setDevice._();
 
   factory GSetDeviceData_setDevice(
-          [Function(GSetDeviceData_setDeviceBuilder b) updates]) =
+          [void Function(GSetDeviceData_setDeviceBuilder b) updates]) =
       _$GSetDeviceData_setDevice;
 
   static void _initializeBuilder(GSetDeviceData_setDeviceBuilder b) =>
       b..G__typename = 'Reading';
+
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   DateTime get stamp;
@@ -56,10 +60,12 @@ abstract class GSetDeviceData_setDevice
   BuiltList<int>? get colorValue;
   static Serializer<GSetDeviceData_setDevice> get serializer =>
       _$gSetDeviceDataSetDeviceSerializer;
+
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GSetDeviceData_setDevice.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GSetDeviceData_setDevice? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
         GSetDeviceData_setDevice.serializer,

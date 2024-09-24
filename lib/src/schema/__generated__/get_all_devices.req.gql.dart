@@ -23,7 +23,8 @@ abstract class GGetAllDevicesReq
         _i1.OperationRequest<_i2.GGetAllDevicesData, _i3.GGetAllDevicesVars> {
   GGetAllDevicesReq._();
 
-  factory GGetAllDevicesReq([Function(GGetAllDevicesReqBuilder b) updates]) =
+  factory GGetAllDevicesReq(
+          [void Function(GGetAllDevicesReqBuilder b) updates]) =
       _$GGetAllDevicesReq;
 
   static void _initializeBuilder(GGetAllDevicesReqBuilder b) => b
@@ -32,6 +33,7 @@ abstract class GGetAllDevicesReq
       operationName: 'GetAllDevices',
     )
     ..executeOnListen = true;
+
   @override
   _i3.GGetAllDevicesVars get vars;
   @override
@@ -40,7 +42,9 @@ abstract class GGetAllDevicesReq
   _i4.Request get execRequest => _i4.Request(
         operation: operation,
         variables: vars.toJson(),
+        context: context ?? const _i4.Context(),
       );
+
   @override
   String? get requestId;
   @override
@@ -60,14 +64,31 @@ abstract class GGetAllDevicesReq
   @override
   bool get executeOnListen;
   @override
+  @BuiltValueField(serialize: false)
+  _i4.Context? get context;
+  @override
   _i2.GGetAllDevicesData? parseData(Map<String, dynamic> json) =>
       _i2.GGetAllDevicesData.fromJson(json);
+
+  @override
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  @override
+  Map<String, dynamic> dataToJson(_i2.GGetAllDevicesData data) => data.toJson();
+
+  @override
+  _i1.OperationRequest<_i2.GGetAllDevicesData, _i3.GGetAllDevicesVars>
+      transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
+          this.rebuild((b) => b..operation = transform(operation));
+
   static Serializer<GGetAllDevicesReq> get serializer =>
       _$gGetAllDevicesReqSerializer;
+
   Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
         GGetAllDevicesReq.serializer,
         this,
       ) as Map<String, dynamic>);
+
   static GGetAllDevicesReq? fromJson(Map<String, dynamic> json) =>
       _i6.serializers.deserializeWith(
         GGetAllDevicesReq.serializer,

@@ -48,7 +48,7 @@ import 'package:drmem_provider/src/schema/__generated__/set_device.req.gql.dart'
 import 'package:drmem_provider/src/schema/__generated__/set_device.var.gql.dart'
     show GSetDeviceVars;
 import 'package:ferry_exec/ferry_exec.dart';
-import 'package:gql_code_builder/src/serializers/operation_serializer.dart'
+import 'package:gql_code_builder_serializers/gql_code_builder_serializers.dart'
     show OperationSerializer;
 
 import '../date_serializer.dart' show DateSerializer;
