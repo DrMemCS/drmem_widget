@@ -129,18 +129,22 @@ extension on Service {
         : null;
   }
 
-  NodeInfo? toNodeInfo() {
+  NodeInfo? toNodeInfo(bool active) {
     if (this case Service(name: String n, host: String h, port: int p)) {
-
-      dev.log("boot time: $boottime", name: "Service::toNodeInfo()");
+      final addr = HostInfo.tryParse(_propToString("pref-addr")) ??
+          HostInfo(_stripTrailingPeriod(h), p);
+      final boottime = _propToString("bootTime");
 
       return NodeInfo(
         name: n,
         addr: addr,
         location: _propToString("location") ?? "unknown",
         version: _propToString("version") ?? "0.0.0",
-        bootTime:
-            boottime != null ? DateTime.tryParse(boottime) : DateTime.now(),
+        bootTime: active
+            ? (boottime != null
+                ? DateTime.tryParse(boottime) ?? DateTime.now()
+                : DateTime.now())
+            : null,
         signature: _propToString("signature"),
         queries: _propToString("queries") ?? "/drmem/q",
         mutations: _propToString("mutations") ?? "/drmem/q",
@@ -408,9 +412,9 @@ class _DrMemState extends State<DrMem> {
         return;
       }
 
-      final ni = service.toNodeInfo();
+      final ni = service.toNodeInfo(status == ServiceStatus.found);
 
-      if (ni != null && status == ServiceStatus.found) {
+      if (ni != null) {
         ctrl.add(ni);
         dev.log("announced node ${ni.name}", name: "mDNS");
       }

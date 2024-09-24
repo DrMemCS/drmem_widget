@@ -112,12 +112,6 @@ class NodeInfo {
       'subscriptions': subscriptions
     };
 
-    // If a boot time is specified, save it.
-
-    if (bootTime != null) {
-      v['bootTime'] = bootTime!.toIso8601String();
-    }
-
     // If a signature is specified, save it.
 
     if (signature != null) {
@@ -144,16 +138,15 @@ class NodeInfo {
           'subscriptions': String subscriptions
         }) {
       final sig = json['signature'];
-      final bt = json['bootTime'];
 
-      if ((sig == null || sig is String) && (bt == null || bt is String)) {
+      if (sig == null || sig is String) {
         return NodeInfo(
             name: name,
             version: version,
             location: location,
             addr: HostInfo(host, port),
             signature: sig,
-            bootTime: bt != null ? DateTime.parse(bt) : bt,
+            bootTime: null,
             queries: queries,
             mutations: mutations,
             subscriptions: subscriptions);
