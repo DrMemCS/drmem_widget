@@ -29,6 +29,7 @@ import 'schema/__generated__/monitor_device.req.gql.dart';
 import 'schema/__generated__/monitor_device.data.gql.dart';
 import 'schema/__generated__/monitor_device.var.gql.dart';
 
+import 'drmem_exception.dart';
 import 'client_id.dart';
 import 'device_value.dart';
 import 'device_like.dart';
@@ -397,7 +398,7 @@ class _DrMemState extends State<DrMem> {
     if (_nodes.containsKey(dev.node)) {
       return dev;
     } else {
-      throw Exception("device on unknown node, '${dev.node}'");
+      throw DrMemException("device on unknown node, '${dev.node}'");
     }
   }
 
