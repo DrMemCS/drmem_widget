@@ -476,25 +476,28 @@ class _DrMemState extends State<DrMem> {
 
   Future<Result> _rpc<TData, TVars, Result>(String node,
       OperationRequest<TData, TVars> request, Result Function(TData) xlat) {
-    final (Client query, _) = _getHandles(node);
-
-    return query
-        .request(request)
-        .where((response) => !response.loading)
-        .first
-        .then((value) {
+    Result processResponse(OperationResponse<TData, TVars> value) {
       if (value.hasErrors) {
-        throw Exception(value.graphqlErrors);
+        throw DrMemException(
+            value.graphqlErrors?.join('\n') ?? "No description for error.");
       } else {
         final data = value.data;
 
         if (data != null) {
           return xlat(data);
         } else {
-          throw Exception("no data was returned from request");
+          throw const DrMemException("No data was returned from request.");
         }
       }
-    });
+    }
+
+    final (Client query, _) = _getHandles(node);
+
+    return query
+        .request(request)
+        .where((response) => !response.loading)
+        .first
+        .then(processResponse);
   }
 
   // The implementation of [DrMem.setDevice].
