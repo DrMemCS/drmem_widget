@@ -2,7 +2,7 @@ library;
 
 import 'dart:math';
 
-const String _jsonKey = 'clientID';
+const String _jsonKey = 'fingerprint';
 
 /// Represents a client ID.
 ///
