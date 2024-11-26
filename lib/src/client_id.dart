@@ -2,7 +2,7 @@ library;
 
 import 'dart:math';
 
-const String _jsonKey = 'clientID';
+const String _jsonKey = 'fingerprint';
 
 /// Represents a client ID.
 ///
@@ -53,9 +53,10 @@ class ClientID {
 
   /// Returns the client ID as a `String` in "xx:xx:xx:xx:xx:xx:xx:xx" notation.
 
-  String get fingerprint => Iterable.generate(_value.length ~/ 2)
-      .map((ii) => _value.substring(ii * 2, ii * 2 + 2))
-      .join(":");
+  String get fingerprint => Iterable.generate(
+        _value.length ~/ 2,
+        (ii) => _value.substring(ii * 2, ii * 2 + 2),
+      ).join(":");
 
   /// Returns a JSON representation of the client ID that can be used to
   /// serialize it to a persistent storage. The return value can be converted
